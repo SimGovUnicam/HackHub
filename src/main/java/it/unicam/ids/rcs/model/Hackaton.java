@@ -27,6 +27,7 @@ package it.unicam.ids.rcs.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,6 +49,8 @@ public class Hackaton {
     private Team vincitore;
 
     public Hackaton() {
+        this.mentori = new ArrayList<>();
+        this.partecipanti = new ArrayList<>();
     }
 
     /**
