@@ -61,7 +61,7 @@ public class Hackaton {
      *                              delle iscrizioni e precedere la data di fine
      * @param fine                  Data di fine dell'hackaton. Deve seguire la data di inizio
      * @param premio                Eventuale premio in denaro
-     * @return {@code True} se i dati sono validi, {@code false} altrimenti
+     * @return <code>True</code> se i dati sono validi, <code>false</code> altrimenti
      */
     public static boolean validaInfo(
             int dimensioneMassimaTeam,

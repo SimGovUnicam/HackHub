@@ -42,7 +42,7 @@ public class Utente {
     private String nome;
     private String cognome;
     /**
-     * {@code True} se l'utente è loggato, {@code false altrimenti}
+     * <code>True</code> se l'utente è loggato, <code>false</code> altrimenti
      */
     private boolean accessoEffettuato;
 
@@ -75,7 +75,7 @@ public class Utente {
 
     /**
      * Determina se l'utente ha effettuato l'accesso
-     * @return {@code True} se l'utente è loggato, {@code false altrimenti}
+     * @return <code>True</code> se l'utente è loggato, <code>false</code> altrimenti}
      */
     public boolean isAccessoEffettuato() {
         return this.accessoEffettuato;
