@@ -23,39 +23,34 @@
  *
  */
 
-package it.unicam.ids.rcs.controller;
+package it.unicam.ids.rcs.util;
 
 import it.unicam.ids.rcs.model.Utente;
-import it.unicam.ids.rcs.repository.UtenteRepository;
-import it.unicam.ids.rcs.util.GestoreUtente;
 
 /**
- * Questa classe si occupa della gestione delle operazioni che riguardano gli utenti.
+ * Questa classe rappresenta un gestore per l'utente che utilizza il sistema
  */
-public class UtenteController {
+// TODO rendere Singleton
+public class GestoreUtente {
+    private static Utente utenteLoggato;
 
-    private final UtenteRepository utenteRepository;
-
-    public UtenteController() {
-        this.utenteRepository = new UtenteRepository();
+    // TODO rimuovere una volta implementati registrazione() e login()
+    static {
+        Utente utenteGenerico = new Utente();
+        utenteGenerico.setEmail("email.email@email.email");
+        utenteGenerico.setNome("john");
+        utenteGenerico.setNome("doe");
+        utenteGenerico.setAccessoEffettuato(true);
+        GestoreUtente.utenteLoggato = utenteGenerico;
     }
 
     /**
-     * Restituisce l'utente attualmente loggato nel sistema, se presente
+     * Restituisce l'utente attualmente autenticato al sistema
      *
-     * @return L'<code>utente</code> attualmente loggato nel sistema se presente,
-     * <code>null</code> altrimenti
+     * @return L'istanza di <code>Utente</code> dell'utente attualmente autenticato
+     * al sistema
      */
-    public static Utente getUtenteInSessione() {
-        return GestoreUtente.getUtente();
-    }
-
-    /**
-     * Questo metodo esegue la ricerca di un utente attraverso l'email.
-     * @param email L'indirizzo email da cercare.
-     * @return l'oggetto <code>Utente</code> oppure null.
-     */
-    public Utente cercaUtente(String email) {
-        return this.utenteRepository.cercaPerEmail(email);
+    public static Utente getUtente() {
+        return GestoreUtente.utenteLoggato;
     }
 }
