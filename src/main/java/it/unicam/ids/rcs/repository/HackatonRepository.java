@@ -50,4 +50,11 @@ public class HackatonRepository {
         transaction.commit();
         session.close();
     }
+
+    public Hackaton cercaPerNome(String nomeHackaton) {
+        Session session = Hibernate.getSessionFactory().openSession();
+        Hackaton hackaton = session.createQuery("from Hackaton where nome = :nome", Hackaton.class).uniqueResult();
+        session.close();
+        return hackaton;
+    }
 }

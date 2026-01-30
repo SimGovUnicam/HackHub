@@ -40,7 +40,8 @@ public class CreaHackatonHandler {
 
     private HackatonController hackatonController;
 
-    public CreaHackatonHandler() {}
+    public CreaHackatonHandler() {
+    }
 
     private void setHackatonController(HackatonController hackatonController) {
         this.hackatonController = hackatonController;
@@ -48,51 +49,51 @@ public class CreaHackatonHandler {
 
     /**
      * Avvia il processo di creazione dell'hackaton
+     *
      * @param dimensioneMassimaTeam La dimensione massima di ciascun team
-     * @param regolamento Il regolamento completo dell'hackaton
-     * @param scadenzaIscrizioni La data di scadenza delle iscrizioni
-     * @param inizio Data di inizio dell'hackaton
-     * @param fine Data di fine dell'hackaton
-     * @param luogo Il luogo in cui si svolge l'hackaton
-     * @param premio Il premio in denaro per il vincitore dell'hackaton
+     * @param regolamento           Il regolamento completo dell'hackaton
+     * @param scadenzaIscrizioni    La data di scadenza delle iscrizioni
+     * @param inizio                Data di inizio dell'hackaton
+     * @param fine                  Data di fine dell'hackaton
+     * @param luogo                 Il luogo in cui si svolge l'hackaton
+     * @param premio                Il premio in denaro per il vincitore dell'hackaton
      * @return <code>True</code> se l'operazione termina con successo, <code>false</code> altrimenti
      */
     public boolean creaHackaton(int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni,
-                             LocalDateTime inizio, LocalDateTime fine, String luogo, Double premio)
-    {
+                                LocalDateTime inizio, LocalDateTime fine, String luogo, Double premio) {
         this.setHackatonController(new HackatonController());
         return this.hackatonController.creaHackaton(dimensioneMassimaTeam, regolamento, scadenzaIscrizioni,
-            inizio, fine, luogo, premio);
+                inizio, fine, luogo, premio);
     }
 
     /**
      * Designa l'utente indicato attraverso l'e-mail come giudice dell'hackaton
+     *
      * @param email L'e-mail dell'utente da designare come giudice
      * @return <code>True</code> in caso di successo, <code>false</code> altrimenti
      * (e.g. Non esistono utenti con l'e-mail fornita)
      */
-    public boolean assegnaGiudice(String email){
+    public boolean assegnaGiudice(String email) {
         return email != null && !email.isEmpty() && this.hackatonController.assegnaGiudice(email);
     }
 
     /**
      * Designa l'utente indicato attraverso l'e-mail come mentore dell'hackaton
+     *
      * @param email L'e-mail dell'utente da designare come mentore
      * @return <code>True</code> in caso di successo, <code>false</code> altrimenti
      * (e.g. Non esistono utenti con l'e-mail fornita)
      */
-    public boolean aggiungiMentore(String email){
+    public boolean aggiungiMentore(String email) {
         return email != null && !email.isEmpty() && this.hackatonController.aggiungiMentore(email);
     }
 
     /**
-     * Conferma la creazione dell'hackaton. L'utente relativo all'e-mail fornita
-     * viene designato come organizzatore. Il sistema registra l'hackaton
-     * @param emailCreatore L'e-mail dell'utente che sta creando l'hackaton e che
-     *                      ne diventerà organizzatore
+     * Conferma la creazione dell'hackaton. Il sistema registra l'hackaton
+     *
      * @return <code>Hackaton</code> in caso di successo, <code>null</code> altrimenti
      */
-    public Hackaton confermaCreazione(String emailCreatore){
-        return this.hackatonController.registraHackaton(emailCreatore);
+    public Hackaton confermaCreazione() {
+        return this.hackatonController.registraHackaton();
     }
 }

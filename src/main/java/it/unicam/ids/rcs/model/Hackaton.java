@@ -25,6 +25,8 @@
 
 package it.unicam.ids.rcs.model;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,7 +36,12 @@ import java.util.List;
  * Questa classe rappresenta un hackaton, ovvero un evento competitivo di progettazione
  * e codifica di un sistema informatico
  */
+@Entity
 public class Hackaton {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String nome;
     private int dimensioneMassimaTeam;
     private String regolamento;
     private LocalDate scadenzaIscrizioni;
@@ -42,43 +49,28 @@ public class Hackaton {
     private LocalDateTime fine;
     private String luogo;
     private double premio;
+    @OneToOne(targetEntity = Utente.class, fetch = FetchType.EAGER)
     private Utente organizzatore;
+    @OneToOne(targetEntity = Utente.class, fetch = FetchType.EAGER)
     private Utente giudice;
+    @OneToMany(targetEntity = Utente.class, fetch = FetchType.LAZY)
     private List<Utente> mentori;
-    private List<Team> partecipanti;
+    @OneToMany(targetEntity = Team.class, fetch = FetchType.LAZY)
+    private List<Team> iscritti;
+    @OneToOne(targetEntity = Team.class, fetch = FetchType.EAGER)
     private Team vincitore;
 
     public Hackaton() {
         this.mentori = new ArrayList<>();
-        this.partecipanti = new ArrayList<>();
+        this.iscritti = new ArrayList<>();
     }
 
-    /**
-     * Determina se le informazioni relative all'hackaton sono valide
-     *
-     * @param dimensioneMassimaTeam La dimensione massima di ciascun team
-     * @param scadenzaIscrizioni    La data di scadenza delle iscrizioni. Deve seguire
-     *                              la data di creazione di almeno 7 giorni.
-     *                              Deve precedere la data di inizio
-     * @param inizio                Data di inizio dell'hackaton. Deve seguire la data di scadenza
-     *                              delle iscrizioni e precedere la data di fine
-     * @param fine                  Data di fine dell'hackaton. Deve seguire la data di inizio
-     * @param premio                Eventuale premio in denaro
-     * @return <code>True</code> se i dati sono validi, <code>false</code> altrimenti
-     */
-    public static boolean validaInfo(
-            int dimensioneMassimaTeam,
-            LocalDate scadenzaIscrizioni,
-            LocalDateTime inizio,
-            LocalDateTime fine,
-            double premio
-    ) {
-        LocalDate oggi = LocalDate.now();
-        return dimensioneMassimaTeam > 0 &&
-                scadenzaIscrizioni.isAfter(oggi.plusDays(7)) &&
-                inizio.isAfter(scadenzaIscrizioni.atStartOfDay()) &&
-                inizio.isBefore(fine) &&
-                premio >= 0.0;
+    public String getNome() {
+        return this.nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public int getDimensioneMassimaTeam() {
@@ -162,15 +154,21 @@ public class Hackaton {
     }
 
     public void aggiungiMentore(Utente mentore) {
-        this.getMentori().add(mentore);
+        if (!this.getMentori().contains(mentore)) {
+            this.getMentori().add(mentore);
+        }
     }
 
-    public List<Team> getPartecipanti() {
-        return this.partecipanti;
+    public boolean rimuoviMentore(Utente utente) {
+        return this.getMentori().remove(utente);
     }
 
-    public void setPartecipanti(List<Team> partecipanti) {
-        this.partecipanti = partecipanti;
+    public List<Team> getIscritti() {
+        return this.iscritti;
+    }
+
+    public void setIscritti(List<Team> iscritti) {
+        this.iscritti = iscritti;
     }
 
     public Team getVincitore() {
@@ -180,4 +178,64 @@ public class Hackaton {
     public void setVincitore(Team vincitore) {
         this.vincitore = vincitore;
     }
+
+    /**
+     * Determina se l'utente fornito è l'organizzatore di questo hackaton
+     *
+     * @param utente L'utente da controllare
+     * @return <code>True</code> se l'utente è l'organizzatore di questo hackaton
+     */
+    public boolean isOrganizzatore(Utente utente) {
+        return utente.equals(this.getOrganizzatore());
+    }
+
+    /**
+     * Determina se l'utente fornito è l'giudice di questo hackaton
+     *
+     * @param utente L'utente da controllare
+     * @return <code>True</code> se l'utente è l'giudice di questo hackaton
+     */
+    public boolean isGiudice(Utente utente) {
+        return utente.equals(this.getGiudice());
+    }
+
+    /**
+     * Determina se l'utente fornito è un mentore di questo hackaton
+     *
+     * @param utente L'utente da controllare
+     * @return <code>True</code> se l'utente è un mentore di questo hackaton
+     */
+    public boolean isMentore(Utente utente) {
+        return this.getMentori().contains(utente);
+    }
+
+    /**
+     * Determina se l'utente fornito è un mentore di questo hackaton
+     *
+     * @param utente L'utente da controllare
+     * @return <code>True</code> se l'utente è un mentore di questo hackaton
+     */
+    public boolean isMembroDelloStaff(Utente utente) {
+        return this.isOrganizzatore(utente) ||
+                this.isGiudice(utente) ||
+                this.isMentore(utente);
+    }
+
+    /**
+     * Determina se l'utente fornito è un mentore di questo hackaton
+     *
+     * @param utente L'utente da controllare
+     * @return <code>True</code> se l'utente è un mentore di questo hackaton
+     */
+    public boolean isMembroDelTeamIscritto(Utente utente) {
+        List<Team> teams = this.getIscritti();
+        for (Team team : teams) {
+            if (team.getMembri().contains(utente)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

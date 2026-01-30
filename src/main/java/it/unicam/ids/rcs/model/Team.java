@@ -25,13 +25,22 @@
 
 package it.unicam.ids.rcs.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Questa classe rappresenta un team composto da almeno due utenti
  */
+@Entity
 public class Team {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String nome;
     private List<Utente> membri;
 

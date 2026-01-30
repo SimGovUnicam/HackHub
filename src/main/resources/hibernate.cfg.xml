@@ -18,6 +18,8 @@
         <property name="format_sql">true</property>
 
         <mapping class="it.unicam.ids.rcs.model.Utente"/>
+        <mapping class="it.unicam.ids.rcs.model.Hackaton"/>
+        <mapping class="it.unicam.ids.rcs.model.Team"/>
 
     </session-factory>
 </hibernate-configuration>

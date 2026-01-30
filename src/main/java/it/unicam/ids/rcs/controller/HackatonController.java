@@ -26,8 +26,10 @@
 package it.unicam.ids.rcs.controller;
 
 import it.unicam.ids.rcs.model.Hackaton;
+import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.repository.HackatonRepository;
 import it.unicam.ids.rcs.util.GestoreNotifiche;
+import it.unicam.ids.rcs.util.ValidatoreHackaton;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -84,10 +86,7 @@ public class HackatonController {
      */
     public boolean creaHackaton(int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni,
                                 LocalDateTime inizio, LocalDateTime fine, String luogo, Double premio) {
-        if (!Hackaton.validaInfo(dimensioneMassimaTeam, scadenzaIscrizioni, inizio, fine, premio))
-            return false;
-
-        var hackaton = new Hackaton();
+        Hackaton hackaton = new Hackaton();
         hackaton.setDimensioneMassimaTeam(dimensioneMassimaTeam);
         hackaton.setRegolamento(regolamento);
         hackaton.setScadenzaIscrizioni(scadenzaIscrizioni);
@@ -102,13 +101,20 @@ public class HackatonController {
 
     /**
      * Assegna l'utente indicato attraverso l'e-mail come giudice dell'hackaton
+     *
      * @param email L'e-mail dell'utente da designare come giudice
      * @return <code>True</code> se l'operazione termina con successo, <code>false</code> altrimenti
      * (e.g. Non esiste un utente con l'e-mail fornita)
      */
     public boolean assegnaGiudice(String email) {
-        var giudice = this.getUtenteController().cercaUtente(email);
+        Utente giudice = this.getUtenteController().cercaUtente(email);
         if (giudice == null) {
+            System.out.println("AssegnaGiudice - Utente non trovato con email: " + email);
+            return false;
+        }
+        if (UtenteController.getUtenteInSessione().equals(giudice)) {
+            // L'utente che sta assegnando il giudice si è auto-designato giudice
+            System.out.println("AssegnaGiudice - L'utente si è auto-designato come giudice: " + email);
             return false;
         }
         this.getHackaton().setGiudice(giudice);
@@ -117,13 +123,20 @@ public class HackatonController {
 
     /**
      * Assegna l'utente indicato attraverso l'e-mail come mentore dell'hackaton
+     *
      * @param email L'e-mail dell'utente da designare come mentore
      * @return <code>True</code> se l'operazione termina con successo, <code>false</code> altrimenti
      * (e.g. Non esiste un utente con l'e-mail fornita)
      */
     public boolean aggiungiMentore(String email) {
-        var mentore = this.getUtenteController().cercaUtente(email);
+        Utente mentore = this.getUtenteController().cercaUtente(email);
         if (mentore == null) {
+            System.out.println("AssegnaMentore - Utente non trovato con email: " + email); // TODO rimuovere dopo porting su SpringBoot
+            return false;
+        }
+        if (UtenteController.getUtenteInSessione().equals(mentore)) {
+            // L'utente che sta assegnando il mentore si è auto-designato mentore
+            System.out.println("AssegnaMentore - L'utente si è auto-designato come mentore: " + email); // TODO rimuovere dopo porting su SpringBoot
             return false;
         }
         this.getHackaton().aggiungiMentore(mentore);
@@ -133,27 +146,29 @@ public class HackatonController {
     /**
      * Registra l'hackaton nel sistema indicato l'utente che lo ha creato come
      * organizzatore dell'hackaton stesso
-     * @param emailCreatore L'e-mail dell'utente che ha creato l'hackaton
+     *
      * @return L'istanza di <code>Hackaton</code> aggiunto in caso di successo,
      * <code>null</code> altrimenti
      */
-    public Hackaton registraHackaton(String emailCreatore) {
-        var organizzatore = this.getUtenteController().cercaUtente(emailCreatore);
-        if (organizzatore == null) {
-            // TODO valutare lancio eccezione
+    public Hackaton registraHackaton() {
+        Hackaton nuovoHackaton = this.getHackaton();
+        ValidatoreHackaton validatore = new ValidatoreHackaton(nuovoHackaton);
+        if (!validatore.validaNuovoHackaton()) {
             return null;
         }
-        var hackaton = this.getHackaton();
-        hackaton.setOrganizzatore(organizzatore);
-        this.getHackatonRepository().registraHackaton(hackaton);
+        Utente organizzatore = UtenteController.getUtenteInSessione();
+        nuovoHackaton.setOrganizzatore(organizzatore);
 
-        this.notificaHackatonCreato(hackaton);
+        this.getHackatonRepository().registraHackaton(nuovoHackaton);
 
-        return hackaton;
+        this.notificaHackatonCreato(nuovoHackaton);
+
+        return nuovoHackaton;
     }
 
     /**
      * Notifica lo staff di un hackaton appena creato della creazione dell'hackaton
+     *
      * @param hackaton L'hackaton creato
      */
     private void notificaHackatonCreato(Hackaton hackaton) {
