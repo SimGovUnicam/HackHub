@@ -25,10 +25,7 @@
 
 package it.unicam.ids.rcs.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +39,7 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
+    @OneToMany(targetEntity = Utente.class, fetch = FetchType.LAZY)
     private List<Utente> membri;
 
     public Team() {
@@ -56,8 +54,7 @@ public class Team {
         this.nome = nome;
     }
 
-    public List<Utente> getMembri()
-    {
+    public List<Utente> getMembri() {
         return this.membri;
     }
 
