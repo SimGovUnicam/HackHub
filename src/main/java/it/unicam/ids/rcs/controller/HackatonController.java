@@ -33,6 +33,7 @@ import it.unicam.ids.rcs.util.ValidatoreHackaton;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Questa classe si occupa della gestione delle operazioni che riguardano gli hackaton
@@ -178,5 +179,28 @@ public class HackatonController {
         gestoreNotifiche.inviaNotifica(messaggio, hackaton.getOrganizzatore());
         gestoreNotifiche.inviaNotifica(messaggio, hackaton.getGiudice());
         gestoreNotifiche.inviaNotifica(messaggio, hackaton.getMentori().getFirst());
+    }
+
+    /**
+     *  Questo metodo esegue la richiesta verso la repository degli hackaton
+     *  per recuperare tutti gli hackatons ancora aperti creati da quello specifico
+     *  utente
+     * @param organizzatoreHackaton
+     * @return una lista di <code>Hackaton</code>
+     */
+    public List<Hackaton> getListaHackatonModificabili(Utente organizzatoreHackaton) {
+        //return this.hackatonRepository.getHackatonsConIscrizioniAperte(organizzatoreHackaton);
+        return null;
+    }
+
+    public Hackaton selezionaHackaton(String nomeHackaton) {
+        Hackaton hackatonOriginale = this.hackatonRepository.cercaPerNome(nomeHackaton);
+        this.setHackaton(hackatonOriginale);
+        return hackatonOriginale;
+    }
+
+    public Hackaton confermaModifica(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio, LocalDateTime fine, String luogo, double premio, String emailGiudice, List<Utente> emailMentori) {
+        //TODO
+        return null;
     }
 }

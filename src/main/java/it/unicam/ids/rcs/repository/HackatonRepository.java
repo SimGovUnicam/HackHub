@@ -26,9 +26,14 @@
 package it.unicam.ids.rcs.repository;
 
 import it.unicam.ids.rcs.model.Hackaton;
+import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.util.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Questa classe rappresenta l'entità che interagisce con il database, eseguendo operazioni CRUD
@@ -58,5 +63,24 @@ public class HackatonRepository {
                 .uniqueResult();
         session.close();
         return hackaton;
+    }
+
+    /**
+     * Si occupa di recuperare tutti gli hackaton creati da uno specifico utente,
+     * in cui le iscrizioni sono ancora aperte.
+     * @param organizzatoreHackaton
+     * @return una lista di <code>Hackaton</code>
+     */
+    public List<Hackaton> getHackatonsConIscrizioniAperte(Utente organizzatoreHackaton) {
+        LocalDate oggi = LocalDate.now();
+        Session session = Hibernate.getSessionFactory().openSession();
+        List<Hackaton> hackatons = new ArrayList<>();
+        hackatons = session.createQuery("from Hackaton where organizzatore = :organizzatoreHackaton and scadenzaIscrizioni >= :oggi",
+                Hackaton.class)
+                .setParameter("organizzatoreHackaton",organizzatoreHackaton)
+                .setParameter("oggi",oggi)
+                .getResultList();
+        session.close();
+        return hackatons;
     }
 }
