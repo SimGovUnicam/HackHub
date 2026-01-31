@@ -43,7 +43,9 @@ public class UtenteRepository {
      */
     public Utente cercaPerEmail(String email) {
         Session session = Hibernate.getSessionFactory().openSession();
-        Utente utente = session.createQuery("from Utente where email = :email", Utente.class).uniqueResult();
+        Utente utente = session.createQuery("from Utente where email = :email", Utente.class)
+                .setParameter("email", email)
+                .uniqueResult();
         session.close();
         return utente;
     }
