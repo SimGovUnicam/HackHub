@@ -26,13 +26,17 @@
 package it.unicam.ids.rcs.controller;
 
 import it.unicam.ids.rcs.model.Hackaton;
+import it.unicam.ids.rcs.model.Notifica;
+import it.unicam.ids.rcs.model.NotificaCreazioneHackaton;
 import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.repository.HackatonRepository;
 import it.unicam.ids.rcs.util.GestoreNotifiche;
+import it.unicam.ids.rcs.util.NotificaModificaHackatonFactory;
 import it.unicam.ids.rcs.util.ValidatoreHackaton;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -193,14 +197,90 @@ public class HackatonController {
         return null;
     }
 
+    /**
+     *
+     * @param nomeHackaton
+     * @return
+     */
     public Hackaton selezionaHackaton(String nomeHackaton) {
         Hackaton hackatonOriginale = this.hackatonRepository.cercaPerNome(nomeHackaton);
         this.setHackaton(hackatonOriginale);
         return hackatonOriginale;
     }
 
-    public Hackaton confermaModifica(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio, LocalDateTime fine, String luogo, double premio, String emailGiudice, List<Utente> emailMentori) {
-        //TODO
-        return null;
+    /**
+     *
+     * @param nome
+     * @param dimensioneMassimaTeam
+     * @param regolamento
+     * @param scadenzaIscrizioni
+     * @param inizio
+     * @param fine
+     * @param luogo
+     * @param premio
+     * @param emailGiudice
+     * @param emailMentori
+     * @return
+     */
+    public Hackaton confermaModifica(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio,
+                                     LocalDateTime fine, String luogo,double premio, String emailGiudice, List<String> emailMentori) {
+        //TODO prendo all'inizio i mentori originali perchè successivamente mi serviranno per le notifiche
+        List<Utente> mentoriHackatonOriginale = this.hackaton.getMentori();
+        Utente giudice = this.utenteController.cercaUtente(emailGiudice);
+        List<Utente> mentori = new ArrayList<>();
+        for(String emailMentore : emailMentori){
+            mentori.add(this.utenteController.cercaUtente(emailMentore));
+        }
+        Hackaton hackatonModificato = new Hackaton(nome,dimensioneMassimaTeam,regolamento,scadenzaIscrizioni,inizio,fine,luogo,premio,giudice,mentori);
+        ValidatoreHackaton validatoreHackaton = new ValidatoreHackaton(hackatonModificato);
+        if(!validatoreHackaton.validaHackatonModificato((this.hackaton)))
+            return null;
+        this.aggiornaInfoHackaton(hackatonModificato);
+        //Lo aggiorno sulla repository e poi allineo il riferimento interno
+        this.hackaton = this.hackatonRepository.aggiornaHackaton(this.hackaton);
+
+        NotificaModificaHackatonFactory notificaFactory = new NotificaModificaHackatonFactory(this.hackaton);
+        Notifica notificaPerGiudice = notificaFactory.getNotifica(this.hackaton.getOrganizzatore(), this.hackaton.getGiudice());
+        String messaggioPerGiudice = notificaPerGiudice.ottieniMessaggioPerGiudice();
+
+        //TODO inizializzazione gestoreNotifiche e invioNotifica() per il giudice
+
+        List<Utente> mentoriDaNotificare = this.ottieniMentoriDaNotificare(mentoriHackatonOriginale,mentori);
+        for(Utente mentore : mentoriDaNotificare){
+            Notifica notificaPerMentore = notificaFactory.getNotifica(this.hackaton.getOrganizzatore(), mentore);
+            String messaggioPerMentore =  notificaPerMentore.ottieniMessaggioPerMentore();
+            //TODO invia notifica per mentore
+        }
+        return this.hackaton;
+    }
+
+    /**
+     *  Questo metodo si occupa di unire le liste di mentori che devono essere notificati
+     *  delle modifica di un hackaton, quindi comprende i mentori assegnati ad uno specifico hackaton
+     *  prima e dopo la modifica
+     * @param MentoriHackatonOriginale
+     * @param nuovaListaMentori
+     * @return
+     */
+    private List<Utente> ottieniMentoriDaNotificare(List<Utente> MentoriHackatonOriginale, List<Utente> nuovaListaMentori) {
+        List<Utente> mentoriDaNotificare = new ArrayList<>(MentoriHackatonOriginale);
+        mentoriDaNotificare.addAll(nuovaListaMentori);
+        return mentoriDaNotificare;
+    }
+
+    /**
+     *
+     * @param hackatonModificato
+     */
+    private void aggiornaInfoHackaton(Hackaton hackatonModificato) {
+        this.hackaton.setNome(hackatonModificato.getNome());
+        this.hackaton.setDimensioneMassimaTeam(hackatonModificato.getDimensioneMassimaTeam());
+        this.hackaton.setRegolamento(hackatonModificato.getRegolamento());
+        this.hackaton.setScadenzaIscrizioni(hackatonModificato.getScadenzaIscrizioni());
+        this.hackaton.setInizio(hackatonModificato.getInizio());
+        this.hackaton.setFine(hackatonModificato.getFine());
+        this.hackaton.setLuogo(hackatonModificato.getLuogo());
+        this.hackaton.setGiudice(hackatonModificato.getGiudice());
+        this.hackaton.setMentori(hackatonModificato.getMentori());
     }
 }

@@ -60,9 +60,7 @@ public class ModificaHackatonHandler {
      * @return
      */
     public Hackaton confermaModifica(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni,
-                                     LocalDateTime inizio, LocalDateTime fine, String luogo, double premio, String emailGiudice, List<Utente> emailMentori){
-        this.hackatonController.confermaModifica(nome,dimensioneMassimaTeam, regolamento, scadenzaIscrizioni,inizio,fine,luogo,premio,emailGiudice,emailMentori);
-        //TODO
-        return null;
+                                     LocalDateTime inizio, LocalDateTime fine, String luogo, double premio, String emailGiudice, List<String> emailMentori){
+        return this.hackatonController.confermaModifica(nome,dimensioneMassimaTeam, regolamento, scadenzaIscrizioni,inizio,fine,luogo,premio,emailGiudice,emailMentori);
     }
 }
