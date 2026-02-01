@@ -83,4 +83,18 @@ public class HackatonRepository {
         session.close();
         return hackatons;
     }
+
+    /**
+     *
+     * @param hackaton
+     * @return
+     */
+    public Hackaton aggiornaHackaton(Hackaton hackaton) {
+        Session session = Hibernate.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        Hackaton hackatonAggiornato = session.merge(hackaton);
+        transaction.commit();
+        session.close();
+        return hackatonAggiornato;
+    }
 }

@@ -65,6 +65,20 @@ public class Hackaton {
         this.iscritti = new ArrayList<>();
     }
 
+    public Hackaton(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio,
+                    LocalDateTime fine, String luogo,double premio, Utente giudice, List<Utente> mentori) {
+        this.nome = nome;
+        this.dimensioneMassimaTeam = dimensioneMassimaTeam;
+        this.regolamento = regolamento;
+        this.scadenzaIscrizioni = scadenzaIscrizioni;
+        this.inizio = inizio;
+        this.fine = fine;
+        this.luogo = luogo;
+        this.premio = premio;
+        this.giudice = giudice;
+        this.mentori = mentori;
+    }
+
     public String getNome() {
         return this.nome;
     }
