@@ -3,10 +3,9 @@ package it.unicam.ids.rcs.model;
 public class NotificaCreazioneHackaton extends Notifica {
     private Hackaton hackaton;
 
-    public NotificaCreazioneHackaton(Hackaton hackaton, Utente utente) {
-        super(utente, null, "");
+    public NotificaCreazioneHackaton(Utente mittente, Utente destinatario,Hackaton hackaton) {
+        super(mittente, destinatario);
         this.hackaton = hackaton;
-
     }
 
     @Override

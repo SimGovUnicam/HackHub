@@ -6,10 +6,9 @@ public abstract class Notifica {
     private Utente destinatario;
     private String messaggio;
 
-    public Notifica(Utente mittente, Utente destinatario, String messaggio) {
+    protected Notifica(Utente mittente, Utente destinatario) {
         this.mittente = mittente;
         this.destinatario = destinatario;
-        this.messaggio = messaggio;
     }
 
     protected Notifica() {

@@ -1,18 +1,19 @@
 package it.unicam.ids.rcs.util;
 
-import it.unicam.ids.rcs.model.Hackaton;
-import it.unicam.ids.rcs.model.Notifica;
-import it.unicam.ids.rcs.model.NotificaCreazioneHackaton;
-import it.unicam.ids.rcs.model.Utente;
+import it.unicam.ids.rcs.model.*;
 
-public abstract class NotificaModificaHackatonFactory extends NotificaFactory{
-    private Hackaton  hackaton;
-    private Utente utente;
-    public NotificaModificaHackatonFactory(Hackaton hackaton, Utente utente){
+/**
+ *
+ */
+public class NotificaModificaHackatonFactory extends NotificaFactory{
+    private Hackaton hackaton;
 
+    public NotificaModificaHackatonFactory(Hackaton hackaton) {
+        this.hackaton = hackaton;
     }
+
     @Override
-    public Notifica getNotifica() {
-        return new NotificaCreazioneHackaton(hackaton, utente);
+    public Notifica getNotifica(Utente mittente, Utente destinatario) {
+        return new NotificaModificaHackaton(mittente, destinatario, this.hackaton);
     }
 }

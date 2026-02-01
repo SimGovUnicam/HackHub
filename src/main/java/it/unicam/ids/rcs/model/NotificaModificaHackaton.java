@@ -1,12 +1,14 @@
 package it.unicam.ids.rcs.model;
 
+/**
+ *
+ */
 public class NotificaModificaHackaton extends Notifica {
     private Hackaton hackaton;
 
-    public NotificaModificaHackaton(Utente utente, Hackaton hackaton) {
-        super(utente, null, "");
+    public NotificaModificaHackaton(Utente mittente, Utente destinatario, Hackaton hackaton) {
+        super(mittente, destinatario);
         this.hackaton = hackaton;
-
     }
 
     @Override
