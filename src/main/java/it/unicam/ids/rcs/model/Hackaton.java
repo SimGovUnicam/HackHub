@@ -59,6 +59,10 @@ public class Hackaton {
     private List<Team> iscritti;
     @OneToOne(targetEntity = Team.class, fetch = FetchType.EAGER)
     private Team vincitore;
+    /**
+     * <code>True</code> se l'hackaton è annullato, <code>false</code> altrimenti
+     */
+    private boolean annullato;
 
     public Hackaton() {
         this.mentori = new ArrayList<>();
@@ -66,7 +70,7 @@ public class Hackaton {
     }
 
     public Hackaton(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio,
-                    LocalDateTime fine, String luogo,double premio, Utente giudice, List<Utente> mentori) {
+                    LocalDateTime fine, String luogo, double premio, Utente giudice, List<Utente> mentori) {
         this.nome = nome;
         this.dimensioneMassimaTeam = dimensioneMassimaTeam;
         this.regolamento = regolamento;
@@ -191,6 +195,14 @@ public class Hackaton {
 
     public void setVincitore(Team vincitore) {
         this.vincitore = vincitore;
+    }
+
+    public boolean isAnnullato() {
+        return this.annullato;
+    }
+
+    public void setAnnullato(boolean annullato) {
+        this.annullato = annullato;
     }
 
     /**

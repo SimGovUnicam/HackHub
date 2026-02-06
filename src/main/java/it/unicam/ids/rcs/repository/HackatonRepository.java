@@ -41,10 +41,12 @@ import java.util.List;
  */
 public class HackatonRepository {
 
-    public HackatonRepository() {}
+    public HackatonRepository() {
+    }
 
     /**
      * Questo metodo registra l'hackaton all'interno del database.
+     *
      * @param hackaton L'hackaton da registrare sul database.
      */
     public void registraHackaton(Hackaton hackaton) {
@@ -56,6 +58,12 @@ public class HackatonRepository {
         session.close();
     }
 
+    /**
+     * Cerca e restituisce l'hackaton con il nome indicato, se presente
+     *
+     * @param nomeHackaton Il nome dell'hackaton da cercare
+     * @return L'<code>hackaton</code> con il nome indicato, se presente
+     */
     public Hackaton cercaPerNome(String nomeHackaton) {
         Session session = Hibernate.getSessionFactory().openSession();
         Hackaton hackaton = session.createQuery("from Hackaton where nome = :nomeHackaton", Hackaton.class)
@@ -68,26 +76,31 @@ public class HackatonRepository {
     /**
      * Si occupa di recuperare tutti gli hackaton creati da uno specifico utente,
      * in cui le iscrizioni sono ancora aperte.
-     * @param organizzatoreHackaton
+     *
+     * @param organizzatoreHackaton L'utente che ha organizzato gli hackaton
      * @return una lista di <code>Hackaton</code>
      */
     public List<Hackaton> getHackatonsConIscrizioniAperte(Utente organizzatoreHackaton) {
         LocalDate oggi = LocalDate.now();
         Session session = Hibernate.getSessionFactory().openSession();
         List<Hackaton> hackatons = new ArrayList<>();
-        hackatons = session.createQuery("from Hackaton where organizzatore = :organizzatoreHackaton and scadenzaIscrizioni >= :oggi",
-                Hackaton.class)
-                .setParameter("organizzatoreHackaton",organizzatoreHackaton)
-                .setParameter("oggi",oggi)
+        String query = "from Hackaton" +
+                " where organizzatore = :organizzatoreHackaton" +
+                " and scadenzaIscrizioni >= :oggi" +
+                " and annullato == false";
+        hackatons = session.createQuery(query, Hackaton.class)
+                .setParameter("organizzatoreHackaton", organizzatoreHackaton)
+                .setParameter("oggi", oggi)
                 .getResultList();
         session.close();
         return hackatons;
     }
 
     /**
+     * Aggiorna i dati dell'hackaton fornito
      *
-     * @param hackaton
-     * @return
+     * @param hackaton L'hackaton con i dati aggiornati
+     * @return L'hackaton aggiornato
      */
     public Hackaton aggiornaHackaton(Hackaton hackaton) {
         Session session = Hibernate.getSessionFactory().openSession();
