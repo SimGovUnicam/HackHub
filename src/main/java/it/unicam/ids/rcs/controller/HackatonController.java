@@ -27,7 +27,6 @@ package it.unicam.ids.rcs.controller;
 
 import it.unicam.ids.rcs.model.Hackaton;
 import it.unicam.ids.rcs.model.Notifica;
-import it.unicam.ids.rcs.model.NotificaCreazioneHackaton;
 import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.repository.HackatonRepository;
 import it.unicam.ids.rcs.util.GestoreNotifiche;
@@ -100,6 +99,8 @@ public class HackatonController {
         hackaton.setLuogo(luogo);
         hackaton.setPremio(premio);
 
+        hackaton.setOrganizzatore(UtenteController.getUtenteInSessione());
+
         this.setHackaton(hackaton);
         return true;
     }
@@ -112,39 +113,56 @@ public class HackatonController {
      * (e.g. Non esiste un utente con l'e-mail fornita)
      */
     public boolean assegnaGiudice(String email) {
+        if (email == null || email.isEmpty()) {
+            System.out.println("AssegnaGiudice - Nessuna e-mail fornita"); // TODO rimuovere dopo porting su SpringBoot
+            return false;
+        }
+
         Utente giudice = this.getUtenteController().cercaUtente(email);
         if (giudice == null) {
-            System.out.println("AssegnaGiudice - Utente non trovato con email: " + email);
+            System.out.println("AssegnaGiudice - Utente non trovato con email: " + email); // TODO rimuovere dopo porting su SpringBoot
             return false;
         }
-        if (UtenteController.getUtenteInSessione().equals(giudice)) {
-            // L'utente che sta assegnando il giudice si è auto-designato giudice
-            System.out.println("AssegnaGiudice - L'utente si è auto-designato come giudice: " + email);
+
+        if (this.getHackaton().isMembroDelloStaff(giudice)) {
+            // Il giudice è già designato come membro dello staff (i.e. Organizzatore, mentore)
+            System.out.println("AssegnaGiudice - L'utente è già un membro dello staff: " + email); // TODO rimuovere dopo porting su SpringBoot
             return false;
         }
+
         this.getHackaton().setGiudice(giudice);
         return true;
     }
 
     /**
-     * Assegna l'utente indicato attraverso l'e-mail come mentore dell'hackaton
+     * Assegna gli utenti indicato attraverso le e-mail come mentori dell'hackaton
      *
-     * @param email L'e-mail dell'utente da designare come mentore
+     * @param emails Le e-mail degli utenti da designare come mentori
      * @return <code>True</code> se l'operazione termina con successo, <code>false</code> altrimenti
      * (e.g. Non esiste un utente con l'e-mail fornita)
      */
-    public boolean aggiungiMentore(String email) {
-        Utente mentore = this.getUtenteController().cercaUtente(email);
-        if (mentore == null) {
-            System.out.println("AssegnaMentore - Utente non trovato con email: " + email); // TODO rimuovere dopo porting su SpringBoot
+    public boolean aggiungiMentori(List<String> emails) {
+        if (emails.isEmpty()) {
+            System.out.println("AssegnaMentore - Nessuna e-mail fornita"); // TODO rimuovere dopo porting su SpringBoot
             return false;
         }
-        if (UtenteController.getUtenteInSessione().equals(mentore)) {
-            // L'utente che sta assegnando il mentore si è auto-designato mentore
-            System.out.println("AssegnaMentore - L'utente si è auto-designato come mentore: " + email); // TODO rimuovere dopo porting su SpringBoot
-            return false;
+
+        for (String email : emails) {
+            Utente mentore = this.getUtenteController().cercaUtente(email);
+            if (mentore == null) {
+                System.out.println("AssegnaMentore - Utente non trovato con email: " + email); // TODO rimuovere dopo porting su SpringBoot
+                return false;
+            }
+
+            if (this.getHackaton().isMembroDelloStaff(mentore)) {
+                // L'utente è già membro dello staff (i.e. Organizzatore, giudice, mentore già aggiunto)
+                System.out.println("AssegnaMentore - L'utente è già un membro dello staff: " + email); // TODO rimuovere dopo porting su SpringBoot
+                return false;
+            }
+
+            this.getHackaton().aggiungiMentore(mentore);
         }
-        this.getHackaton().aggiungiMentore(mentore);
+
         return true;
     }
 
@@ -161,8 +179,6 @@ public class HackatonController {
         if (!validatore.validaNuovoHackaton()) {
             return null;
         }
-        Utente organizzatore = UtenteController.getUtenteInSessione();
-        nuovoHackaton.setOrganizzatore(organizzatore);
 
         this.getHackatonRepository().registraHackaton(nuovoHackaton);
 
@@ -186,21 +202,22 @@ public class HackatonController {
     }
 
     /**
-     *  Questo metodo esegue la richiesta verso la repository degli hackaton
-     *  per recuperare tutti gli hackatons ancora aperti creati da quello specifico
-     *  utente
-     * @param organizzatoreHackaton
+     * Questo metodo esegue la richiesta verso la repository degli hackaton
+     * per recuperare tutti gli hackaton ancora aperti creati da quello specifico
+     * utente
+     *
+     * @param organizzatoreHackaton L'utente che ha organizzato gli hackaton
      * @return una lista di <code>Hackaton</code>
      */
     public List<Hackaton> getListaHackatonModificabili(Utente organizzatoreHackaton) {
-        //return this.hackatonRepository.getHackatonsConIscrizioniAperte(organizzatoreHackaton);
+        // return this.hackatonRepository.getHackatonsConIscrizioniAperte(organizzatoreHackaton);
         return null;
     }
 
     /**
-     *
-     * @param nomeHackaton
-     * @return
+     * Dato il nome di un hackaton, lo seleziona per poter essere modificato
+     * @param nomeHackaton Il nome dell'hackaton da selezionare
+     * @return L'hackaton trovato
      */
     public Hackaton selezionaHackaton(String nomeHackaton) {
         Hackaton hackatonOriginale = this.hackatonRepository.cercaPerNome(nomeHackaton);
@@ -223,41 +240,42 @@ public class HackatonController {
      * @return
      */
     public Hackaton confermaModifica(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio,
-                                     LocalDateTime fine, String luogo,double premio, String emailGiudice, List<String> emailMentori) {
-        //TODO prendo all'inizio i mentori originali perchè successivamente mi serviranno per le notifiche
+                                     LocalDateTime fine, String luogo, double premio, String emailGiudice, List<String> emailMentori) {
+        // TODO prendo all'inizio i mentori originali perchè successivamente mi serviranno per le notifiche
         List<Utente> mentoriHackatonOriginale = this.hackaton.getMentori();
         Utente giudice = this.utenteController.cercaUtente(emailGiudice);
         List<Utente> mentori = new ArrayList<>();
-        for(String emailMentore : emailMentori){
+        for (String emailMentore : emailMentori) {
             mentori.add(this.utenteController.cercaUtente(emailMentore));
         }
-        Hackaton hackatonModificato = new Hackaton(nome,dimensioneMassimaTeam,regolamento,scadenzaIscrizioni,inizio,fine,luogo,premio,giudice,mentori);
+        Hackaton hackatonModificato = new Hackaton(nome, dimensioneMassimaTeam, regolamento, scadenzaIscrizioni, inizio, fine, luogo, premio, giudice, mentori);
         ValidatoreHackaton validatoreHackaton = new ValidatoreHackaton(hackatonModificato);
-        if(!validatoreHackaton.validaHackatonModificato((this.hackaton)))
+        if (!validatoreHackaton.validaHackatonModificato((this.hackaton)))
             return null;
         this.aggiornaInfoHackaton(hackatonModificato);
-        //Lo aggiorno sulla repository e poi allineo il riferimento interno
+        // Lo aggiorno sulla repository e poi allineo il riferimento interno
         this.hackaton = this.hackatonRepository.aggiornaHackaton(this.hackaton);
 
         NotificaModificaHackatonFactory notificaFactory = new NotificaModificaHackatonFactory(this.hackaton);
         Notifica notificaPerGiudice = notificaFactory.getNotifica(this.hackaton.getOrganizzatore(), this.hackaton.getGiudice());
         String messaggioPerGiudice = notificaPerGiudice.ottieniMessaggioPerGiudice();
 
-        //TODO inizializzazione gestoreNotifiche e invioNotifica() per il giudice
+        // TODO inizializzazione gestoreNotifiche e invioNotifica() per il giudice
 
-        List<Utente> mentoriDaNotificare = this.ottieniMentoriDaNotificare(mentoriHackatonOriginale,mentori);
-        for(Utente mentore : mentoriDaNotificare){
+        List<Utente> mentoriDaNotificare = this.ottieniMentoriDaNotificare(mentoriHackatonOriginale, mentori);
+        for (Utente mentore : mentoriDaNotificare) {
             Notifica notificaPerMentore = notificaFactory.getNotifica(this.hackaton.getOrganizzatore(), mentore);
-            String messaggioPerMentore =  notificaPerMentore.ottieniMessaggioPerMentore();
-            //TODO invia notifica per mentore
+            String messaggioPerMentore = notificaPerMentore.ottieniMessaggioPerMentore();
+            // TODO invia notifica per mentore
         }
         return this.hackaton;
     }
 
     /**
-     *  Questo metodo si occupa di unire le liste di mentori che devono essere notificati
-     *  delle modifica di un hackaton, quindi comprende i mentori assegnati ad uno specifico hackaton
-     *  prima e dopo la modifica
+     * Questo metodo si occupa di unire le liste di mentori che devono essere notificati
+     * della modifica di un hackaton, quindi comprende i mentori assegnati a uno specifico hackaton
+     * prima e dopo la modifica
+     *
      * @param MentoriHackatonOriginale
      * @param nuovaListaMentori
      * @return

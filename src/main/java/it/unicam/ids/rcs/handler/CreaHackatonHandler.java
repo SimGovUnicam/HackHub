@@ -30,6 +30,7 @@ import it.unicam.ids.rcs.model.Hackaton;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Questa classe rappresenta un gestore del caso d'uso Crea Hackaton.
@@ -74,18 +75,18 @@ public class CreaHackatonHandler {
      * (e.g. Non esistono utenti con l'e-mail fornita)
      */
     public boolean assegnaGiudice(String email) {
-        return email != null && !email.isEmpty() && this.hackatonController.assegnaGiudice(email);
+        return this.hackatonController.assegnaGiudice(email);
     }
 
     /**
      * Designa l'utente indicato attraverso l'e-mail come mentore dell'hackaton
      *
-     * @param email L'e-mail dell'utente da designare come mentore
+     * @param emails L'e-mail dell'utente da designare come mentore
      * @return <code>True</code> in caso di successo, <code>false</code> altrimenti
      * (e.g. Non esistono utenti con l'e-mail fornita)
      */
-    public boolean aggiungiMentore(String email) {
-        return email != null && !email.isEmpty() && this.hackatonController.aggiungiMentore(email);
+    public boolean aggiungiMentori(List<String> emails) {
+        return emails != null && !emails.isEmpty() && this.hackatonController.aggiungiMentori(emails);
     }
 
     /**
