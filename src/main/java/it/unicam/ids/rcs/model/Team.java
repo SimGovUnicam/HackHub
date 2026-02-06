@@ -41,8 +41,15 @@ public class Team {
     private String nome;
     @OneToMany(targetEntity = Utente.class, fetch = FetchType.LAZY)
     private List<Utente> membri;
+    @OneToOne(targetEntity = Utente.class, fetch = FetchType.LAZY)
+    private Utente fondatore;
 
     public Team() {
+        this.membri = new ArrayList<>();
+    }
+
+    public Team(String nome) {
+        this.nome = nome;
         this.membri = new ArrayList<>();
     }
 
@@ -61,4 +68,6 @@ public class Team {
     public void setMembri(List<Utente> membri) {
         this.membri = membri;
     }
+
+    public void setFondatore(Utente fondatore) {this.fondatore = fondatore;}
 }
