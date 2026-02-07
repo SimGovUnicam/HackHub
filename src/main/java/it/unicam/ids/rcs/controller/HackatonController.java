@@ -164,7 +164,7 @@ public class HackatonController {
     }
 
     /**
-     * Registra l'hackaton nel sistema indicato l'utente che lo ha creato come
+     * Registra l'hackaton nel sistema indicando l'utente che lo ha creato come
      * organizzatore dell'hackaton stesso
      *
      * @return L'istanza di <code>Hackaton</code> aggiunto in caso di successo,
@@ -214,8 +214,7 @@ public class HackatonController {
      * @return una lista di <code>Hackaton</code>
      */
     public List<Hackaton> getListaHackatonModificabili(Utente organizzatoreHackaton) {
-        // return this.hackatonRepository.getHackatonsConIscrizioniAperte(organizzatoreHackaton);
-        return null;
+        return this.hackatonRepository.getHackatonsConIscrizioniAperte(organizzatoreHackaton);
     }
 
     /**
@@ -231,20 +230,21 @@ public class HackatonController {
     }
 
     /**
-     *
-     * @param nome
-     * @param dimensioneMassimaTeam
-     * @param regolamento
-     * @param scadenzaIscrizioni
-     * @param inizio
-     * @param fine
-     * @param luogo
-     * @param premio
-     * @param emailGiudice
-     * @param emailMentori
-     * @return
+     * Questo metodo si occupa di memorizzare le modifiche apportate ad uno specifico hackaton.
+     * @param nome                      Il nome dell'hackaton
+     * @param dimensioneMassimaTeam     La dimensione massima di ciascun team
+     * @param regolamento               Il regolamento completo dell'hackaton
+     * @param scadenzaIscrizioni        La data di scadenza delle iscrizioni
+     * @param inizio                    Data di inizio dell'hackaton
+     * @param fine                      Data di fine dell'hackaton
+     * @param luogo                     Il luogo in cui si svolge l'hackaton
+     * @param premio                    Il premio in denaro per il vincitore dell'hackaton
+     * @param emailGiudice              L'email dell'utente assegnato al ruolo del giudice
+     * @param emailMentori              Elenco di email di utenti assegnati come mentori
+     * @return l'<code>hackaton</code> con tutte le informazioni aggiornate.
      */
-    public Hackaton confermaModifica(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio, LocalDateTime fine, String luogo, double premio, String emailGiudice, List<String> emailMentori) {
+    public Hackaton confermaModifica(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni,
+                                     LocalDateTime inizio, LocalDateTime fine, String luogo, double premio, String emailGiudice, List<String> emailMentori) {
         List<Utente> mentoriHackatonOriginale = new ArrayList<>(this.hackaton.getMentori());
         Utente giudice = this.utenteController.cercaUtente(emailGiudice);
         List<Utente> mentori = new ArrayList<>();
@@ -261,6 +261,12 @@ public class HackatonController {
         return this.hackaton;
     }
 
+    /**
+     * Questo metodo si occupa di inviare una notifica al giudice ed ai mentori che fanno
+     * parte dello staff di un determinato hackaton.
+     * @param hackaton L'hackaton che è stato modificato.
+     * @param mentoriHackatonOriginale  i mentori, inizialmente assegnati all'hackaton, che devono essere avvisati della modifica.
+     */
     private void notificaHackatonModificato(Hackaton hackaton, List<Utente> mentoriHackatonOriginale) {
         NotificaModificaHackatonFactory notificaFactory = new NotificaModificaHackatonFactory(hackaton);
         Notifica notificaPerGiudice = notificaFactory.getNotifica(hackaton.getOrganizzatore(), hackaton.getGiudice());
@@ -291,8 +297,9 @@ public class HackatonController {
     }
 
     /**
-     *
-     * @param hackatonModificato
+     *  Questo metodo aggiorna le info dell'hackaton attualmente salvato in memoria con le
+     *  info dell'hackaton modificato.
+     * @param hackatonModificato L'hackaton modificato.
      */
     private void aggiornaInfoHackaton(Hackaton hackatonModificato) {
         this.hackaton.setNome(hackatonModificato.getNome());
