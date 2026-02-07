@@ -29,9 +29,7 @@ import it.unicam.ids.rcs.model.Hackaton;
 import it.unicam.ids.rcs.model.Notifica;
 import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.repository.HackatonRepository;
-import it.unicam.ids.rcs.util.GestoreNotifiche;
-import it.unicam.ids.rcs.util.NotificaModificaHackatonFactory;
-import it.unicam.ids.rcs.util.ValidatoreHackaton;
+import it.unicam.ids.rcs.util.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -88,8 +86,7 @@ public class HackatonController {
      * @param premio                Il premio in denaro per il vincitore dell'hackaton
      * @return <code>True</code> se l'operazione termina con successo, <code>false</code> altrimenti
      */
-    public boolean creaHackaton(int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni,
-                                LocalDateTime inizio, LocalDateTime fine, String luogo, Double premio) {
+    public boolean creaHackaton(int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio, LocalDateTime fine, String luogo, Double premio) {
         Hackaton hackaton = new Hackaton();
         hackaton.setDimensioneMassimaTeam(dimensioneMassimaTeam);
         hackaton.setRegolamento(regolamento);
@@ -194,11 +191,18 @@ public class HackatonController {
      */
     private void notificaHackatonCreato(Hackaton hackaton) {
         var gestoreNotifiche = new GestoreNotifiche();
-        var messaggio = "Nuovo hackaton creato: " + hackaton;
-
-        gestoreNotifiche.inviaNotifica(messaggio, hackaton.getOrganizzatore());
-        gestoreNotifiche.inviaNotifica(messaggio, hackaton.getGiudice());
-        gestoreNotifiche.inviaNotifica(messaggio, hackaton.getMentori().getFirst());
+        NotificaFactory factory = new NotificaCreazioneHackatonFactory(hackaton);
+        var notificaPerOrganizzatore = factory.getNotifica(hackaton.getOrganizzatore(), hackaton.getOrganizzatore());
+        notificaPerOrganizzatore.ottieniMessaggioPerOrganizzatore();
+        gestoreNotifiche.inviaNotifica(notificaPerOrganizzatore);
+        var notificaPerGiudice = factory.getNotifica(hackaton.getOrganizzatore(), hackaton.getGiudice());
+        notificaPerGiudice.ottieniMessaggioPerGiudice();
+        gestoreNotifiche.inviaNotifica(notificaPerGiudice);
+        for (var mentore : hackaton.getMentori()) {
+            var notificaPerMentore = factory.getNotifica(hackaton.getOrganizzatore(), mentore);
+            notificaPerMentore.ottieniMessaggioPerMentore();
+            gestoreNotifiche.inviaNotifica(notificaPerMentore);
+        }
     }
 
     /**
@@ -216,6 +220,7 @@ public class HackatonController {
 
     /**
      * Dato il nome di un hackaton, lo seleziona per poter essere modificato
+     *
      * @param nomeHackaton Il nome dell'hackaton da selezionare
      * @return L'hackaton trovato
      */
@@ -239,10 +244,8 @@ public class HackatonController {
      * @param emailMentori
      * @return
      */
-    public Hackaton confermaModifica(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio,
-                                     LocalDateTime fine, String luogo, double premio, String emailGiudice, List<String> emailMentori) {
-        // TODO prendo all'inizio i mentori originali perchè successivamente mi serviranno per le notifiche
-        List<Utente> mentoriHackatonOriginale = this.hackaton.getMentori();
+    public Hackaton confermaModifica(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio, LocalDateTime fine, String luogo, double premio, String emailGiudice, List<String> emailMentori) {
+        List<Utente> mentoriHackatonOriginale = new ArrayList<>(this.hackaton.getMentori());
         Utente giudice = this.utenteController.cercaUtente(emailGiudice);
         List<Utente> mentori = new ArrayList<>();
         for (String emailMentore : emailMentori) {
@@ -250,25 +253,26 @@ public class HackatonController {
         }
         Hackaton hackatonModificato = new Hackaton(nome, dimensioneMassimaTeam, regolamento, scadenzaIscrizioni, inizio, fine, luogo, premio, giudice, mentori);
         ValidatoreHackaton validatoreHackaton = new ValidatoreHackaton(hackatonModificato);
-        if (!validatoreHackaton.validaHackatonModificato((this.hackaton)))
-            return null;
+        if (!validatoreHackaton.validaHackatonModificato((this.hackaton))) return null;
         this.aggiornaInfoHackaton(hackatonModificato);
         // Lo aggiorno sulla repository e poi allineo il riferimento interno
         this.hackaton = this.hackatonRepository.aggiornaHackaton(this.hackaton);
-
-        NotificaModificaHackatonFactory notificaFactory = new NotificaModificaHackatonFactory(this.hackaton);
-        Notifica notificaPerGiudice = notificaFactory.getNotifica(this.hackaton.getOrganizzatore(), this.hackaton.getGiudice());
-        String messaggioPerGiudice = notificaPerGiudice.ottieniMessaggioPerGiudice();
-
-        // TODO inizializzazione gestoreNotifiche e invioNotifica() per il giudice
-
-        List<Utente> mentoriDaNotificare = this.ottieniMentoriDaNotificare(mentoriHackatonOriginale, mentori);
-        for (Utente mentore : mentoriDaNotificare) {
-            Notifica notificaPerMentore = notificaFactory.getNotifica(this.hackaton.getOrganizzatore(), mentore);
-            String messaggioPerMentore = notificaPerMentore.ottieniMessaggioPerMentore();
-            // TODO invia notifica per mentore
-        }
+        this.notificaHackatonModificato(hackaton, mentoriHackatonOriginale);
         return this.hackaton;
+    }
+
+    private void notificaHackatonModificato(Hackaton hackaton, List<Utente> mentoriHackatonOriginale) {
+        NotificaModificaHackatonFactory notificaFactory = new NotificaModificaHackatonFactory(hackaton);
+        Notifica notificaPerGiudice = notificaFactory.getNotifica(hackaton.getOrganizzatore(), hackaton.getGiudice());
+        var gestoreNotifiche = new GestoreNotifiche();
+        String messaggioPerGiudice = notificaPerGiudice.ottieniMessaggioPerGiudice();
+        gestoreNotifiche.inviaNotifica(notificaPerGiudice);
+        List<Utente> mentoriDaNotificare = this.ottieniMentoriDaNotificare(mentoriHackatonOriginale, hackaton.getMentori());
+        for (Utente mentore : mentoriDaNotificare) {
+            Notifica notificaPerMentore = notificaFactory.getNotifica(hackaton.getOrganizzatore(), mentore);
+            String messaggioPerMentore = notificaPerMentore.ottieniMessaggioPerMentore();
+            gestoreNotifiche.inviaNotifica(notificaPerMentore);
+        }
     }
 
     /**

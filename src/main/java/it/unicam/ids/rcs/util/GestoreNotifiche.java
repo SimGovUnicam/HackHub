@@ -25,13 +25,14 @@
 
 package it.unicam.ids.rcs.util;
 
-import it.unicam.ids.rcs.model.Utente;
+import it.unicam.ids.rcs.model.Notifica;
 
 public class GestoreNotifiche {
 
-    public GestoreNotifiche() {}
+    public GestoreNotifiche() {
+    }
 
-    public void inviaNotifica(String messaggio, Utente destinatario){
+    public void inviaNotifica(Notifica notificaDaInviare) {
         //TODO
     }
 
