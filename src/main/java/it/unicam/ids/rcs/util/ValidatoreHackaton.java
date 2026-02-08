@@ -37,6 +37,8 @@ import java.time.LocalDate;
  * un hackaton
  */
 public class ValidatoreHackaton {
+    public static final int PERIODO_MINIMO_SCADENZA_ISCRIZIONI = 7;
+
     private Hackaton hackatonDaValidare;
     private HackatonController controllerHackaton;
     private UtenteController controllerUtente;
@@ -81,7 +83,7 @@ public class ValidatoreHackaton {
         Hackaton hackaton = this.getHackatonDaValidare();
         LocalDate oggi = LocalDate.now();
         return this.validaInfoOrganizzativeDiBase() &&
-                hackaton.getScadenzaIscrizioni().isAfter(oggi.plusDays(7)) &&
+                hackaton.getScadenzaIscrizioni().isAfter(oggi.plusDays(PERIODO_MINIMO_SCADENZA_ISCRIZIONI)) &&
                 this.validaNomeHackaton() &&
                 this.validaUtentiHackaton();
     }

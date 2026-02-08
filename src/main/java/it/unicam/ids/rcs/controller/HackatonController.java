@@ -58,7 +58,7 @@ public class HackatonController {
         return this.hackaton;
     }
 
-    private void setHackaton(Hackaton hackaton) {
+    protected void setHackaton(Hackaton hackaton) {
         this.hackaton = hackaton;
     }
 
