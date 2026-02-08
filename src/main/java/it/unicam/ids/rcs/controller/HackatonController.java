@@ -26,10 +26,14 @@
 package it.unicam.ids.rcs.controller;
 
 import it.unicam.ids.rcs.model.Hackaton;
-import it.unicam.ids.rcs.model.Notifica;
+import it.unicam.ids.rcs.model.notifica.Notifica;
 import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.repository.HackatonRepository;
 import it.unicam.ids.rcs.util.*;
+import it.unicam.ids.rcs.util.notifica.GestoreNotifiche;
+import it.unicam.ids.rcs.util.notifica.NotificaCreazioneHackatonFactory;
+import it.unicam.ids.rcs.util.notifica.NotificaFactory;
+import it.unicam.ids.rcs.util.notifica.NotificaModificaHackatonFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

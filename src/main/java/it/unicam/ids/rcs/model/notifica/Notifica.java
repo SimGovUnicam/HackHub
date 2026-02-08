@@ -24,7 +24,10 @@
  *
  */
 
-package it.unicam.ids.rcs.model;
+package it.unicam.ids.rcs.model.notifica;
+
+import it.unicam.ids.rcs.model.Utente;
+
 /*
 Questa classe viene usata per la gestione delle notifiche  
  */

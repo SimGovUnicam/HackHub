@@ -23,22 +23,49 @@
  *
  */
 
-package it.unicam.ids.rcs.util;
+package it.unicam.ids.rcs.model.notifica;
+
+/* Questa classe  estende la classe notifica,
+ invia una notifica a Organizzatore, Giudice, Mentore nel momento della creazione dell'Hackaton*/
 
 import it.unicam.ids.rcs.model.Hackaton;
-import it.unicam.ids.rcs.model.Notifica;
-import it.unicam.ids.rcs.model.NotificaCreazioneHackaton;
 import it.unicam.ids.rcs.model.Utente;
 
-public class NotificaCreazioneHackatonFactory extends NotificaFactory {
+public class NotificaCreazioneHackaton extends Notifica {
     private Hackaton hackaton;
 
-    public NotificaCreazioneHackatonFactory(Hackaton hackaton) {
+    public NotificaCreazioneHackaton(Utente mittente, Utente destinatario, Hackaton hackaton) {
+        super(mittente, destinatario);
         this.hackaton = hackaton;
     }
 
     @Override
-    public Notifica getNotifica(Utente mittente, Utente destinatario) {
-        return new NotificaCreazioneHackaton(mittente, destinatario, this.hackaton);
+    public String ottieniMessaggioPerOrganizzatore() {
+        return this.setMessaggio("É stato creato un nuovo Hackaton: " + hackaton.getNome());
+    }
+
+    @Override
+    public String ottieniMessaggioPerGiudice() {
+        return this.setMessaggio("É stato creato un nuovo Hackaton: " + hackaton.getNome());
+    }
+
+    @Override
+    public String ottieniMessaggioPerMentore() {
+        return this.setMessaggio("É stato creato un nuovo Hackaton: " + hackaton.getNome());
+    }
+
+    @Override
+    public String ottieniMessaggioPerMembroDelloStaff() {
+        return "";
+    }
+
+    @Override
+    public String ottieniMessaggioPerMembroDelTeam() {
+        return "";
+    }
+
+    public String ottieniMessaggioPerUtente() {
+        return "";
+
     }
 }

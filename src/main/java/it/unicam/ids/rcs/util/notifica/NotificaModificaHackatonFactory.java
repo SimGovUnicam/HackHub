@@ -23,9 +23,11 @@
  *
  */
 
-package it.unicam.ids.rcs.util;
+package it.unicam.ids.rcs.util.notifica;
 
 import it.unicam.ids.rcs.model.*;
+import it.unicam.ids.rcs.model.notifica.Notifica;
+import it.unicam.ids.rcs.model.notifica.NotificaModificaHackaton;
 
 /**
  *

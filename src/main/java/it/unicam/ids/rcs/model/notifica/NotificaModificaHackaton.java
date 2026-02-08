@@ -23,7 +23,10 @@
  *
  */
 
-package it.unicam.ids.rcs.model;
+package it.unicam.ids.rcs.model.notifica;
+
+import it.unicam.ids.rcs.model.Hackaton;
+import it.unicam.ids.rcs.model.Utente;
 
 /**Questa classe estende la classe Notifica,
  * invia una notifica a Organizzatore,Giudice,Mentore,Membro del team,
