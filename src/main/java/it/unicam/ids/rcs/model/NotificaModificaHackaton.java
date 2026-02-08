@@ -25,9 +25,12 @@
 
 package it.unicam.ids.rcs.model;
 
-/**Questa classe estende la classe Notifica,
- * invia una notifica a Organizzatore,Giudice,Mentore,Membro del team,
- * a seguito delle modifiche effettuate dall'organizzatore all'Hackaton
+import jdk.jshell.spi.ExecutionControl;
+
+/**
+ * Questa classe estende la classe Notifica, invia una notifica a Organizzatore,
+ * Giudice, Mentore, Membro del team, a seguito delle modifiche effettuate
+ * dall'organizzatore all'Hackaton
  */
 public class NotificaModificaHackaton extends Notifica {
     private Hackaton hackaton;
@@ -53,8 +56,8 @@ public class NotificaModificaHackaton extends Notifica {
     }
 
     @Override
-    public String ottieniMessaggioPerMembroDelloStaff() {
-        return "";
+    public String ottieniMessaggioPerMembroDelloStaff() throws ExecutionControl.NotImplementedException {
+        throw new ExecutionControl.NotImplementedException("Messaggio per membro dello staff non previsto");
     }
 
     @Override
@@ -62,9 +65,8 @@ public class NotificaModificaHackaton extends Notifica {
         return this.setMessaggio("L'hackaton " + hackaton.getNome() + " è stato modificato.");
     }
 
-    public String ottieniMessaggioPerUtente() {
-        return "";
-
+    public String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException {
+        throw new ExecutionControl.NotImplementedException("Messaggio per membro dello staff non previsto");
     }
 
 }

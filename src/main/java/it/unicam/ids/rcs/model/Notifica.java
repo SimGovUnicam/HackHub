@@ -25,6 +25,9 @@
  */
 
 package it.unicam.ids.rcs.model;
+
+import jdk.jshell.spi.ExecutionControl;
+
 /*
 Questa classe viene usata per la gestione delle notifiche  
  */
@@ -66,17 +69,17 @@ public abstract class Notifica {
         return messaggio;
     }
 
-    public abstract String ottieniMessaggioPerOrganizzatore();
+    public abstract String ottieniMessaggioPerOrganizzatore() throws ExecutionControl.NotImplementedException;
 
-    public abstract String ottieniMessaggioPerGiudice();
+    public abstract String ottieniMessaggioPerGiudice() throws ExecutionControl.NotImplementedException;
 
-    public abstract String ottieniMessaggioPerMentore();
+    public abstract String ottieniMessaggioPerMentore() throws ExecutionControl.NotImplementedException;
 
-    public abstract String ottieniMessaggioPerMembroDelloStaff();
+    public abstract String ottieniMessaggioPerMembroDelloStaff() throws ExecutionControl.NotImplementedException;
 
-    public abstract String ottieniMessaggioPerMembroDelTeam();
+    public abstract String ottieniMessaggioPerMembroDelTeam() throws ExecutionControl.NotImplementedException;
 
-    public abstract String ottieniMessaggioPerUtente();
+    public abstract String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException;
 }
 
 

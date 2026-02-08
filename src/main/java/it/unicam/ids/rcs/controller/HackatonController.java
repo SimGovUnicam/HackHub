@@ -30,6 +30,7 @@ import it.unicam.ids.rcs.model.Notifica;
 import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.repository.HackatonRepository;
 import it.unicam.ids.rcs.util.*;
+import jdk.jshell.spi.ExecutionControl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -193,14 +194,24 @@ public class HackatonController {
         var gestoreNotifiche = new GestoreNotifiche();
         NotificaFactory factory = new NotificaCreazioneHackatonFactory(hackaton);
         var notificaPerOrganizzatore = factory.getNotifica(hackaton.getOrganizzatore(), hackaton.getOrganizzatore());
-        notificaPerOrganizzatore.ottieniMessaggioPerOrganizzatore();
         gestoreNotifiche.inviaNotifica(notificaPerOrganizzatore);
         var notificaPerGiudice = factory.getNotifica(hackaton.getOrganizzatore(), hackaton.getGiudice());
-        notificaPerGiudice.ottieniMessaggioPerGiudice();
+        try {
+            notificaPerOrganizzatore.ottieniMessaggioPerOrganizzatore();
+            notificaPerGiudice.ottieniMessaggioPerGiudice();
+        } catch (ExecutionControl.NotImplementedException e) {
+            System.out.println("Eccezione in notificaHackatonCreato: " + e.getMessage()); // TODO rimuovere dopo porting su Springboot
+            return;
+        }
         gestoreNotifiche.inviaNotifica(notificaPerGiudice);
         for (var mentore : hackaton.getMentori()) {
             var notificaPerMentore = factory.getNotifica(hackaton.getOrganizzatore(), mentore);
-            notificaPerMentore.ottieniMessaggioPerMentore();
+            try {
+                notificaPerMentore.ottieniMessaggioPerMentore();
+            } catch (ExecutionControl.NotImplementedException e) {
+                System.out.println("Eccezione in notificaHackatonCreato: " + e.getMessage()); // TODO rimuovere dopo porting su Springboot
+                return;
+            }
             gestoreNotifiche.inviaNotifica(notificaPerMentore);
         }
     }
@@ -274,12 +285,23 @@ public class HackatonController {
         NotificaModificaHackatonFactory notificaFactory = new NotificaModificaHackatonFactory(hackaton);
         Notifica notificaPerGiudice = notificaFactory.getNotifica(hackaton.getOrganizzatore(), hackaton.getGiudice());
         var gestoreNotifiche = new GestoreNotifiche();
-        String messaggioPerGiudice = notificaPerGiudice.ottieniMessaggioPerGiudice();
+        try {
+            notificaPerGiudice.ottieniMessaggioPerGiudice();
+        } catch (ExecutionControl.NotImplementedException e) {
+            System.out.println("Eccezione in notificaHackatonModificato: " + e.getMessage()); // TODO rimuovere dopo porting su Springboot
+            return;
+        }
+
         gestoreNotifiche.inviaNotifica(notificaPerGiudice);
         List<Utente> mentoriDaNotificare = this.ottieniMentoriDaNotificare(mentoriHackatonOriginale, hackaton.getMentori());
         for (Utente mentore : mentoriDaNotificare) {
             Notifica notificaPerMentore = notificaFactory.getNotifica(hackaton.getOrganizzatore(), mentore);
-            String messaggioPerMentore = notificaPerMentore.ottieniMessaggioPerMentore();
+            try {
+                notificaPerMentore.ottieniMessaggioPerMentore();
+            } catch (ExecutionControl.NotImplementedException e) {
+                System.out.println("Eccezione in notificaHackatonModificato: " + e.getMessage()); // TODO rimuovere dopo porting su Springboot
+                return;
+            }
             gestoreNotifiche.inviaNotifica(notificaPerMentore);
         }
     }
