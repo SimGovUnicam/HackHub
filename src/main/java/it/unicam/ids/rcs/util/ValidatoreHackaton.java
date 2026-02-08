@@ -131,7 +131,7 @@ public class ValidatoreHackaton {
                 hackatonOriginale.getScadenzaIscrizioni(),
                 hackatonModificato.getScadenzaIscrizioni()
         );
-        boolean dimensioneMassimaValida = hackatonModificato.getDimensioneMassimaTeam() < hackatonOriginale.getDimensioneMassimaTeam();
+        boolean dimensioneMassimaValida = hackatonModificato.getDimensioneMassimaTeam() > hackatonOriginale.getDimensioneMassimaTeam();
         boolean nomeValido = hackatonOriginale.getNome().equals(hackatonModificato.getNome()) ||
                 this.validaNomeHackaton();
 

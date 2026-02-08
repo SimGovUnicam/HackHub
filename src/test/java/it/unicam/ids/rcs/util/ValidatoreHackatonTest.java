@@ -259,6 +259,27 @@ public class ValidatoreHackatonTest {
 
         assertFalse(this.getValidatore().validaNuovoHackaton());
     }
+
+    @Test
+    public void hackatonModificatoDimensioneMassimaTeamRidotta(){
+        Assumptions.assumeTrue(this.getValidatore().validaNuovoHackaton());
+
+        int dimensioneMassimaOriginale = this.getHackaton().getDimensioneMassimaTeam();
+        this.getHackaton().setDimensioneMassimaTeam(dimensioneMassimaOriginale-1);
+
+        assertFalse(this.getValidatore().validaNuovoHackaton());
+    }
+
+    @Test
+    public void hackatonModificatoDimensioneMassimaTeamAumentata(){
+        Assumptions.assumeTrue(this.getValidatore().validaNuovoHackaton());
+
+        int dimensioneMassimaOriginale = this.getHackaton().getDimensioneMassimaTeam();
+        this.getHackaton().setDimensioneMassimaTeam(dimensioneMassimaOriginale+2);
+
+        assertTrue(this.getValidatore().validaNuovoHackaton());
+    }
+
     /**
      * Mock di un controller hackaton per gestire le operazioni esclusivamente in memoria
      */
