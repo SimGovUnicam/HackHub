@@ -30,6 +30,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.util.Objects;
+
 /**
  * Questa classe rappresenta un utente del sistema
  */
@@ -83,5 +85,26 @@ public class Utente {
 
     public void setAccessoEffettuato(boolean accessoEffettuato) {
         this.accessoEffettuato = accessoEffettuato;
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof Utente utente)) return false;
+
+        return Objects.equals(id, utente.id) && getEmail().equals(utente.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(id);
+        result = 31 * result + getEmail().hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Utente {" +
+                "email = '" + email + "'" +
+                '}';
     }
 }

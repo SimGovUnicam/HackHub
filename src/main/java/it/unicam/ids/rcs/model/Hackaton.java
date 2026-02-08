@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Questa classe rappresenta un hackaton, ovvero un evento competitivo di progettazione
@@ -264,4 +265,24 @@ public class Hackaton {
         return false;
     }
 
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof Hackaton hackaton)) return false;
+
+        return Objects.equals(id, hackaton.id) && getNome().equals(hackaton.getNome());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(id);
+        result = 31 * result + getNome().hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Hackaton {" +
+                "nome = '" + nome + "'" +
+                '}';
+    }
 }
