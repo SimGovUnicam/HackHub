@@ -25,10 +25,10 @@
 
 package it.unicam.ids.rcs.util;
 
+import it.unicam.ids.rcs.controller.HackatonController;
 import it.unicam.ids.rcs.controller.UtenteController;
 import it.unicam.ids.rcs.model.Hackaton;
 import it.unicam.ids.rcs.model.Utente;
-import it.unicam.ids.rcs.repository.HackatonRepository;
 
 import java.time.LocalDate;
 
@@ -38,9 +38,13 @@ import java.time.LocalDate;
  */
 public class ValidatoreHackaton {
     private Hackaton hackatonDaValidare;
+    private HackatonController controllerHackaton;
+    private UtenteController controllerUtente;
 
-    public ValidatoreHackaton(Hackaton hackatonDaValidare) {
+    public ValidatoreHackaton(Hackaton hackatonDaValidare, HackatonController controllerHackaton, UtenteController controllerUtente) {
         this.hackatonDaValidare = hackatonDaValidare;
+        this.controllerHackaton = controllerHackaton;
+        this.controllerUtente = controllerUtente;
     }
 
     public Hackaton getHackatonDaValidare() {
@@ -49,6 +53,22 @@ public class ValidatoreHackaton {
 
     public void setHackatonDaValidare(Hackaton hackatonDaValidare) {
         this.hackatonDaValidare = hackatonDaValidare;
+    }
+
+    private HackatonController getControllerHackaton() {
+        return this.controllerHackaton;
+    }
+
+    private void setControllerHackaton(HackatonController controllerHackaton) {
+        this.controllerHackaton = controllerHackaton;
+    }
+
+    private UtenteController getControllerUtente() {
+        return this.controllerUtente;
+    }
+
+    private void setControllerUtente(UtenteController controllerUtente) {
+        this.controllerUtente = controllerUtente;
     }
 
     /**
@@ -89,9 +109,8 @@ public class ValidatoreHackaton {
      * <code>false</code> altrimenti
      */
     private boolean validaNomeHackaton() {
-        HackatonRepository hackatonRepository = new HackatonRepository();
         String nomeHackaton = this.getHackatonDaValidare().getNome();
-        return hackatonRepository.cercaPerNome(nomeHackaton) == null;
+        return this.getControllerHackaton().cercaHackaton(nomeHackaton) == null;
     }
 
     /**
@@ -133,7 +152,7 @@ public class ValidatoreHackaton {
      */
     private boolean validaUtentiHackaton() {
         Hackaton hackaton = this.getHackatonDaValidare();
-        UtenteController utenteController = new UtenteController();
+        UtenteController utenteController = this.getControllerUtente();
         for (Utente mentore : hackaton.getMentori()) {
             if (utenteController.cercaUtente(mentore.getEmail()) == null ||
                     hackaton.isOrganizzatore(mentore) ||

@@ -176,7 +176,7 @@ public class HackatonController {
      */
     public Hackaton registraHackaton() {
         Hackaton nuovoHackaton = this.getHackaton();
-        ValidatoreHackaton validatore = new ValidatoreHackaton(nuovoHackaton);
+        ValidatoreHackaton validatore = new ValidatoreHackaton(nuovoHackaton, this, this.getUtenteController());
         if (!validatore.validaNuovoHackaton()) {
             return null;
         }
@@ -235,16 +235,17 @@ public class HackatonController {
 
     /**
      * Questo metodo si occupa di memorizzare le modifiche apportate ad uno specifico hackaton.
-     * @param nome                      Il nome dell'hackaton
-     * @param dimensioneMassimaTeam     La dimensione massima di ciascun team
-     * @param regolamento               Il regolamento completo dell'hackaton
-     * @param scadenzaIscrizioni        La data di scadenza delle iscrizioni
-     * @param inizio                    Data di inizio dell'hackaton
-     * @param fine                      Data di fine dell'hackaton
-     * @param luogo                     Il luogo in cui si svolge l'hackaton
-     * @param premio                    Il premio in denaro per il vincitore dell'hackaton
-     * @param emailGiudice              L'email dell'utente assegnato al ruolo del giudice
-     * @param emailMentori              Elenco di email di utenti assegnati come mentori
+     *
+     * @param nome                  Il nome dell'hackaton
+     * @param dimensioneMassimaTeam La dimensione massima di ciascun team
+     * @param regolamento           Il regolamento completo dell'hackaton
+     * @param scadenzaIscrizioni    La data di scadenza delle iscrizioni
+     * @param inizio                Data di inizio dell'hackaton
+     * @param fine                  Data di fine dell'hackaton
+     * @param luogo                 Il luogo in cui si svolge l'hackaton
+     * @param premio                Il premio in denaro per il vincitore dell'hackaton
+     * @param emailGiudice          L'email dell'utente assegnato al ruolo del giudice
+     * @param emailMentori          Elenco di email di utenti assegnati come mentori
      * @return l'<code>hackaton</code> con tutte le informazioni aggiornate.
      */
     public Hackaton confermaModifica(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni,
@@ -256,8 +257,9 @@ public class HackatonController {
             mentori.add(this.utenteController.cercaUtente(emailMentore));
         }
         Hackaton hackatonModificato = new Hackaton(nome, dimensioneMassimaTeam, regolamento, scadenzaIscrizioni, inizio, fine, luogo, premio, giudice, mentori);
-        ValidatoreHackaton validatoreHackaton = new ValidatoreHackaton(hackatonModificato);
-        if (!validatoreHackaton.validaHackatonModificato((this.hackaton))) return null;
+        ValidatoreHackaton validatoreHackaton = new ValidatoreHackaton(hackatonModificato, this, this.getUtenteController());
+        if (!validatoreHackaton.validaHackatonModificato((this.hackaton)))
+            return null;
         this.aggiornaInfoHackaton(hackatonModificato);
         // Lo aggiorno sulla repository e poi allineo il riferimento interno
         this.hackaton = this.hackatonRepository.aggiornaHackaton(this.hackaton);
@@ -268,8 +270,9 @@ public class HackatonController {
     /**
      * Questo metodo si occupa di inviare una notifica al giudice ed ai mentori che fanno
      * parte dello staff di un determinato hackaton.
-     * @param hackaton L'hackaton che è stato modificato.
-     * @param mentoriHackatonOriginale  i mentori, inizialmente assegnati all'hackaton, che devono essere avvisati della modifica.
+     *
+     * @param hackaton                 L'hackaton che è stato modificato.
+     * @param mentoriHackatonOriginale i mentori, inizialmente assegnati all'hackaton, che devono essere avvisati della modifica.
      */
     private void notificaHackatonModificato(Hackaton hackaton, List<Utente> mentoriHackatonOriginale) {
         NotificaModificaHackatonFactory notificaFactory = new NotificaModificaHackatonFactory(hackaton);
@@ -301,8 +304,9 @@ public class HackatonController {
     }
 
     /**
-     *  Questo metodo aggiorna le info dell'hackaton attualmente salvato in memoria con le
-     *  info dell'hackaton modificato.
+     * Questo metodo aggiorna le info dell'hackaton attualmente salvato in memoria con le
+     * info dell'hackaton modificato.
+     *
      * @param hackatonModificato L'hackaton modificato.
      */
     private void aggiornaInfoHackaton(Hackaton hackatonModificato) {
@@ -315,5 +319,15 @@ public class HackatonController {
         this.hackaton.setLuogo(hackatonModificato.getLuogo());
         this.hackaton.setGiudice(hackatonModificato.getGiudice());
         this.hackaton.setMentori(hackatonModificato.getMentori());
+    }
+
+    /**
+     * Cerca un <code>hackaton</code> in base al suo nome
+     *
+     * @param nome Il nome per cui cercare l'<code>hackaton</code>
+     * @return L'<code>hackaton</code> se trovato, null altrimenti
+     */
+    public Hackaton cercaHackaton(String nome) {
+        return this.getHackatonRepository().cercaPerNome(nome);
     }
 }
