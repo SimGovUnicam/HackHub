@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,7 +55,7 @@ public class HackatonTest {
         return hackaton;
     }
 
-    private static Utente creaOrganizzatore() {
+    public static Utente creaOrganizzatore() {
         Utente organizzatore = new Utente();
         organizzatore.setNome("John");
         organizzatore.setCognome("Doe");
@@ -63,7 +64,7 @@ public class HackatonTest {
         return organizzatore;
     }
 
-    private static Utente creaGiudice() {
+    public static Utente creaGiudice() {
         Utente giudice = new Utente();
         giudice.setNome("Joe");
         giudice.setCognome("Smith");
@@ -72,7 +73,7 @@ public class HackatonTest {
         return giudice;
     }
 
-    private static List<Utente> creaMentori(int numero) {
+    public static List<Utente> creaMentori(int numero) {
         List<Utente> mentori = new ArrayList<>();
         while (numero-- > 0) {
             mentori.add(creaUtenteRandom());
@@ -80,17 +81,17 @@ public class HackatonTest {
         return mentori;
     }
 
-    private static Utente creaUtenteRandom() {
-        var randomInt = ThreadLocalRandom.current().nextInt(1, 1000);
+    public static Utente creaUtenteRandom() {
+        var uuid = UUID.randomUUID().toString();
         Utente utente = new Utente();
-        utente.setNome("Utente_Nome_" + randomInt);
-        utente.setCognome("Utente_Cognome" + randomInt);
-        utente.setEmail("email_" + randomInt + "@email.com");
+        utente.setNome("Utente_Nome_" + uuid);
+        utente.setCognome("Utente_Cognome" + uuid);
+        utente.setEmail("email_" + uuid + "@email.com");
         utente.setAccessoEffettuato(false);
         return utente;
     }
 
-    private static List<Team> creaTeams(int numero, int dimensioneMassima) {
+    public static List<Team> creaTeams(int numero, int dimensioneMassima) {
         List<Team> teams = new ArrayList<>();
         while (numero-- > 0) {
             teams.add(creaTeam(dimensioneMassima));
@@ -98,7 +99,7 @@ public class HackatonTest {
         return teams;
     }
 
-    private static Team creaTeam(int dimensioneMassima) {
+    public static Team creaTeam(int dimensioneMassima) {
         int dimensione = ThreadLocalRandom.current().nextInt(2, dimensioneMassima);
         List<Utente> membriDelTeam = new LinkedList<>();
         while (dimensione-- > 0) {
