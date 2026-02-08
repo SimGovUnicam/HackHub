@@ -23,34 +23,39 @@
  *
  */
 
-package it.unicam.ids.rcs.model;
+package it.unicam.ids.rcs.model.notifica;
 
-/* Questa classe estende la classe notifica,
- invia una notifica a Organizzatore, Giudice, Mentore nel momento della creazione dell'Hackaton*/
+import it.unicam.ids.rcs.model.Hackaton;
+import it.unicam.ids.rcs.model.Utente;
 
 import jdk.jshell.spi.ExecutionControl;
 
-public class NotificaCreazioneHackaton extends Notifica {
+/**
+ * Questa classe estende la classe Notifica, invia una notifica a Organizzatore,
+ * Giudice, Mentore, Membro del team, a seguito delle modifiche effettuate
+ * dall'organizzatore all'Hackaton
+ */
+public class NotificaModificaHackaton extends Notifica {
     private Hackaton hackaton;
 
-    public NotificaCreazioneHackaton(Utente mittente, Utente destinatario, Hackaton hackaton) {
+    public NotificaModificaHackaton(Utente mittente, Utente destinatario, Hackaton hackaton) {
         super(mittente, destinatario);
         this.hackaton = hackaton;
     }
 
     @Override
     public String ottieniMessaggioPerOrganizzatore() {
-        return this.setMessaggio("É stato creato un nuovo Hackaton: " + hackaton.getNome());
+        return this.setMessaggio("L'hackaton " + hackaton.getNome() + " è stato modificato.");
     }
 
     @Override
     public String ottieniMessaggioPerGiudice() {
-        return this.setMessaggio("É stato creato un nuovo Hackaton: " + hackaton.getNome());
+        return this.setMessaggio("L'hackaton " + hackaton.getNome() + " è stato modificato.");
     }
 
     @Override
     public String ottieniMessaggioPerMentore() {
-        return this.setMessaggio("É stato creato un nuovo Hackaton: " + hackaton.getNome());
+        return this.setMessaggio("L'hackaton " + hackaton.getNome() + " è stato modificato.");
     }
 
     @Override
@@ -59,11 +64,12 @@ public class NotificaCreazioneHackaton extends Notifica {
     }
 
     @Override
-    public String ottieniMessaggioPerMembroDelTeam() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per membro del team non previsto");
+    public String ottieniMessaggioPerMembroDelTeam() {
+        return this.setMessaggio("L'hackaton " + hackaton.getNome() + " è stato modificato.");
     }
 
     public String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per utente non previsto");
+        throw new ExecutionControl.NotImplementedException("Messaggio per membro dello staff non previsto");
     }
+
 }

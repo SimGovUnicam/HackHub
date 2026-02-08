@@ -24,7 +24,9 @@
  *
  */
 
-package it.unicam.ids.rcs.model;
+package it.unicam.ids.rcs.model.notifica;
+
+import it.unicam.ids.rcs.model.Utente;
 
 import jdk.jshell.spi.ExecutionControl;
 
@@ -48,20 +50,20 @@ public abstract class Notifica {
         return mittente;
     }
 
-    public Utente getDestinatario() {
-        return destinatario;
-    }
-
-    public String getMessaggio() {
-        return messaggio;
-    }
-
     private void setMittente(Utente mittente) {
         this.mittente = mittente;
     }
 
+    public Utente getDestinatario() {
+        return destinatario;
+    }
+
     private void setDestinatario(Utente destinatario) {
         this.destinatario = destinatario;
+    }
+
+    public String getMessaggio() {
+        return messaggio;
     }
 
     protected String setMessaggio(String messaggio) {
