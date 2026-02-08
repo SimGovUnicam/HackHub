@@ -238,46 +238,46 @@ public class ValidatoreHackatonTest {
 
     @Test
     public void hackatonModificatoScadenzaIscrizioniDopoScadenzaIscrizioniOriginale(){
-        Assumptions.assumeTrue(this.getValidatore().validaNuovoHackaton());
-
         int giorniOffset = ThreadLocalRandom.current().nextInt(1, ValidatoreHackaton.PERIODO_MINIMO_SCADENZA_ISCRIZIONI);
         LocalDate nuovaScadenza = this.getHackaton().getScadenzaIscrizioni().plusDays(giorniOffset);
-        this.getHackaton().setScadenzaIscrizioni(nuovaScadenza);
+        Hackaton hackatonModificato = HackatonTest.creaHackatonBase();
+        hackatonModificato.setScadenzaIscrizioni(nuovaScadenza);
+        ValidatoreHackaton validatoreHackatonModificato = new ValidatoreHackaton(hackatonModificato,hackatonController,utenteController);
 
-        assertTrue(this.getValidatore().validaNuovoHackaton());
+        assertTrue(validatoreHackatonModificato.validaHackatonModificato((this.hackaton)));
     }
 
 
     @Test
     public void hackatonModificatoScadenzaIscrizioniAlmenoTraUnaSettimana(){
         //La nuova scadenza di iscrizioni ha meno di 7 giorni di margine a partire dal momento della modifica
-        Assumptions.assumeTrue(this.getValidatore().validaNuovoHackaton());
-        LocalDate oggi = LocalDate.now();
         int giorniOffset = ThreadLocalRandom.current().nextInt(0, ValidatoreHackaton.PERIODO_MINIMO_SCADENZA_ISCRIZIONI);
-        LocalDate scadenzaIscrizioni = oggi.plusDays(giorniOffset);
-        this.getHackaton().setScadenzaIscrizioni(scadenzaIscrizioni);
+        LocalDate nuovaScadenza = this.getHackaton().getScadenzaIscrizioni().plusDays(giorniOffset);
+        Hackaton hackatonModificato = HackatonTest.creaHackatonBase();
+        hackatonModificato.setScadenzaIscrizioni(nuovaScadenza);
+        ValidatoreHackaton validatoreHackatonModificato = new ValidatoreHackaton(hackatonModificato,hackatonController,utenteController);
 
-        assertFalse(this.getValidatore().validaNuovoHackaton());
+        assertFalse(validatoreHackatonModificato.validaHackatonModificato((this.hackaton)));
     }
 
     @Test
     public void hackatonModificatoDimensioneMassimaTeamRidotta(){
-        Assumptions.assumeTrue(this.getValidatore().validaNuovoHackaton());
-
         int dimensioneMassimaOriginale = this.getHackaton().getDimensioneMassimaTeam();
-        this.getHackaton().setDimensioneMassimaTeam(dimensioneMassimaOriginale-1);
+        Hackaton hackatonModificato = HackatonTest.creaHackatonBase();
+        hackatonModificato.setDimensioneMassimaTeam(dimensioneMassimaOriginale-1);
+        ValidatoreHackaton validatoreHackatonModificato = new ValidatoreHackaton(hackatonModificato,hackatonController,utenteController);
 
-        assertFalse(this.getValidatore().validaNuovoHackaton());
+        assertFalse(validatoreHackatonModificato.validaHackatonModificato((this.hackaton)));
     }
 
     @Test
     public void hackatonModificatoDimensioneMassimaTeamAumentata(){
-        Assumptions.assumeTrue(this.getValidatore().validaNuovoHackaton());
-
         int dimensioneMassimaOriginale = this.getHackaton().getDimensioneMassimaTeam();
-        this.getHackaton().setDimensioneMassimaTeam(dimensioneMassimaOriginale+2);
+        Hackaton hackatonModificato = HackatonTest.creaHackatonBase();
+        hackatonModificato.setDimensioneMassimaTeam(dimensioneMassimaOriginale+2);
+        ValidatoreHackaton validatoreHackatonModificato = new ValidatoreHackaton(hackatonModificato,hackatonController,utenteController);
 
-        assertTrue(this.getValidatore().validaNuovoHackaton());
+        assertFalse(validatoreHackatonModificato.validaHackatonModificato((this.hackaton)));
     }
 
     /**
