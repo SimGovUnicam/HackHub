@@ -29,7 +29,6 @@ import it.unicam.ids.rcs.controller.HackatonController;
 import it.unicam.ids.rcs.controller.UtenteController;
 import it.unicam.ids.rcs.model.Hackaton;
 import it.unicam.ids.rcs.model.Utente;
-import it.unicam.ids.rcs.repository.HackatonRepository;
 
 import java.time.LocalDate;
 
