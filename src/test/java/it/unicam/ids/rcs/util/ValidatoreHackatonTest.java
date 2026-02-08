@@ -236,6 +236,29 @@ public class ValidatoreHackatonTest {
         assertTrue(validatore.validaNuovoHackaton());
     }
 
+    @Test
+    public void hackatonModificatoScadenzaIscrizioniDopoScadenzaIscrizioniOriginale(){
+        Assumptions.assumeTrue(this.getValidatore().validaNuovoHackaton());
+
+        int giorniOffset = ThreadLocalRandom.current().nextInt(1, ValidatoreHackaton.PERIODO_MINIMO_SCADENZA_ISCRIZIONI);
+        LocalDate nuovaScadenza = this.getHackaton().getScadenzaIscrizioni().plusDays(giorniOffset);
+        this.getHackaton().setScadenzaIscrizioni(nuovaScadenza);
+
+        assertTrue(this.getValidatore().validaNuovoHackaton());
+    }
+
+
+    @Test
+    public void hackatonModificatoScadenzaIscrizioniAlmenoTraUnaSettimana(){
+        //La nuova scadenza di iscrizioni ha meno di 7 giorni di margine a partire dal momento della modifica
+        Assumptions.assumeTrue(this.getValidatore().validaNuovoHackaton());
+        LocalDate oggi = LocalDate.now();
+        int giorniOffset = ThreadLocalRandom.current().nextInt(0, ValidatoreHackaton.PERIODO_MINIMO_SCADENZA_ISCRIZIONI);
+        LocalDate scadenzaIscrizioni = oggi.plusDays(giorniOffset);
+        this.getHackaton().setScadenzaIscrizioni(scadenzaIscrizioni);
+
+        assertFalse(this.getValidatore().validaNuovoHackaton());
+    }
     /**
      * Mock di un controller hackaton per gestire le operazioni esclusivamente in memoria
      */
