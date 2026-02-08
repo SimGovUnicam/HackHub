@@ -175,7 +175,7 @@ public class HackatonController {
      */
     public Hackaton registraHackaton() {
         Hackaton nuovoHackaton = this.getHackaton();
-        ValidatoreHackaton validatore = new ValidatoreHackaton(nuovoHackaton);
+        ValidatoreHackaton validatore = new ValidatoreHackaton(nuovoHackaton, this, this.getUtenteController());
         if (!validatore.validaNuovoHackaton()) {
             return null;
         }
@@ -249,7 +249,7 @@ public class HackatonController {
             mentori.add(this.utenteController.cercaUtente(emailMentore));
         }
         Hackaton hackatonModificato = new Hackaton(nome, dimensioneMassimaTeam, regolamento, scadenzaIscrizioni, inizio, fine, luogo, premio, giudice, mentori);
-        ValidatoreHackaton validatoreHackaton = new ValidatoreHackaton(hackatonModificato);
+        ValidatoreHackaton validatoreHackaton = new ValidatoreHackaton(hackatonModificato, this, this.getUtenteController());
         if (!validatoreHackaton.validaHackatonModificato((this.hackaton)))
             return null;
         this.aggiornaInfoHackaton(hackatonModificato);
@@ -300,5 +300,14 @@ public class HackatonController {
         this.hackaton.setLuogo(hackatonModificato.getLuogo());
         this.hackaton.setGiudice(hackatonModificato.getGiudice());
         this.hackaton.setMentori(hackatonModificato.getMentori());
+    }
+
+    /**
+     * Cerca un <code>hackaton</code> in base al suo nome
+     * @param nome Il nome per cui cercare l'<code>hackaton</code>
+     * @return L'<code>hackaton</code> se trovato, null altrimenti
+     */
+    public Hackaton cercaHackaton(String nome) {
+        return this.getHackatonRepository().cercaPerNome(nome);
     }
 }
