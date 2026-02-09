@@ -67,6 +67,7 @@ public class NotificaModificaHackaton extends Notifica {
     public String ottieniMessaggioPerMembroDelTeam() {
         return this.setMessaggio("L'hackaton " + hackaton.getNome() + " è stato modificato.");
     }
+    @Override
 
     public String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException {
         throw new ExecutionControl.NotImplementedException("Messaggio per membro dello staff non previsto");
