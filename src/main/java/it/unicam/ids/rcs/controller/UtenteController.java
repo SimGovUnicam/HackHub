@@ -40,6 +40,10 @@ public class UtenteController {
         this.utenteRepository = new UtenteRepository();
     }
 
+    public UtenteController(UtenteRepository utenteRepository) {
+        this.utenteRepository = utenteRepository;
+    }
+
     /**
      * Restituisce l'utente attualmente loggato nel sistema, se presente
      *

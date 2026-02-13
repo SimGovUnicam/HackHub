@@ -54,6 +54,11 @@ public class HackatonController {
         this.utenteController = new UtenteController();
     }
 
+    public HackatonController(HackatonRepository hackatonRepository){
+        this.hackatonRepository = hackatonRepository;
+        this.utenteController = new UtenteController();
+    }
+
     public Hackaton getHackaton() {
         return this.hackaton;
     }
