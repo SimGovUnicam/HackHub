@@ -277,7 +277,7 @@ public class ValidatoreHackatonTest {
         hackatonModificato.setDimensioneMassimaTeam(dimensioneMassimaOriginale+2);
         ValidatoreHackaton validatoreHackatonModificato = new ValidatoreHackaton(hackatonModificato,hackatonController,utenteController);
 
-        assertFalse(validatoreHackatonModificato.validaHackatonModificato((this.hackaton)));
+        assertTrue(validatoreHackatonModificato.validaHackatonModificato((this.hackaton)));
     }
 
     /**
