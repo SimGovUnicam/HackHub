@@ -40,7 +40,7 @@ public class InvitoRepository {
      *
      * @param invito L'invito da registrare
      */
-    public void registraTeam(Invito invito) {
+    public void registraInvito(Invito invito) {
         Session session = Hibernate.getSessionFactory().openSession();
         session.beginTransaction();
         Transaction transaction = session.beginTransaction();
