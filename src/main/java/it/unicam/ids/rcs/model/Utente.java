@@ -25,10 +25,7 @@
 
 package it.unicam.ids.rcs.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.Objects;
 
@@ -43,6 +40,9 @@ public class Utente {
     private String email;
     private String nome;
     private String cognome;
+    @ManyToOne(targetEntity = Team.class)
+    @JoinColumn()
+    private Team team;
     /**
      * <code>True</code> se l'utente è loggato, <code>false</code> altrimenti
      */
@@ -75,8 +75,25 @@ public class Utente {
         this.cognome = cognome;
     }
 
+    public Team getTeam() {
+        return team;
+    }
+
+    /**
+     * Imposta il team di questo utente e, contestualmente, imposta questo utente
+     * come membro del team
+     * @param team Il team di cui questo membro fa parte
+     */
+    public void setTeam(Team team) {
+        this.team = team;
+        if (team.getMembri() != null && !team.getMembri().contains(this)) { // Per evitare riferimenti circolari
+            team.aggiungiMembro(this);
+        }
+    }
+
     /**
      * Determina se l'utente ha effettuato l'accesso
+     *
      * @return <code>True</code> se l'utente è loggato, <code>false</code> altrimenti}
      */
     public boolean isAccessoEffettuato() {

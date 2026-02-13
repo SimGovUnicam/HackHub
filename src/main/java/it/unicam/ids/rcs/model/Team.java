@@ -32,7 +32,7 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
-    @OneToMany(targetEntity = Utente.class, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = Utente.class, fetch = FetchType.LAZY, mappedBy = "team")
     private List<Utente> membri;
     @OneToOne(targetEntity = Utente.class, fetch = FetchType.LAZY)
     private Utente fondatore;
@@ -55,12 +55,39 @@ public class Team {
     }
 
     public List<Utente> getMembri() {
-        return this.membri;
+        return new ArrayList<>(this.membri);
     }
 
     public void setMembri(List<Utente> membri) {
         this.membri = membri;
     }
 
-    public void setFondatore(Utente fondatore) {this.fondatore = fondatore;}
+    public void setFondatore(Utente fondatore) {
+        this.fondatore = fondatore;
+    }
+
+    /**
+     * Aggiunge un utente a questo team e, contestualmente, imposta questo
+     * team come team del nuovo membro
+     *
+     * @param nuovoMembro L'utente da aggiungere al team
+     */
+    public void aggiungiMembro(Utente nuovoMembro) {
+        this.getMembri().add(nuovoMembro);
+        if (nuovoMembro.getTeam() == null || !nuovoMembro.getTeam().equals(this)) {
+            nuovoMembro.setTeam(this);
+        }
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof Team team)) return false;
+
+        return getNome().equals(team.getNome());
+    }
+
+    @Override
+    public int hashCode() {
+        return getNome().hashCode();
+    }
 }
