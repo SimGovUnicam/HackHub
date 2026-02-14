@@ -33,7 +33,7 @@ import org.hibernate.Session;
  * Questa classe rappresenta l'entità che interagisce con il database, eseguendo operazioni CRUD
  * in base alle richieste inviate dal controller.
  */
-public class UtenteRepository {
+public class UtenteRepository extends GenericRepository<Utente> {
 
     /**
      * Questa classe si occupa della ricerca all'interno del database di un utente in base alla mail

@@ -25,19 +25,39 @@
 
 package it.unicam.ids.rcs.repository;
 
-import it.unicam.ids.rcs.model.invito.Invito;
+import it.unicam.ids.rcs.util.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 /**
- * Questa classe rappresenta l'entità che interagisce con il database, eseguendo operazioni CRUD
- * in base alle richieste inviate dal controller degli inviti.
+ * Questa classe rappresenta una repository generica che implementa le operazioni
+ * principali attraverso Hibernate
+ *
+ * @param <E> Il tipo dell'entità gestita da questa repository
  */
-public class InvitoRepository extends GenericRepository<Invito> {
+public class GenericRepository<E> {
     /**
-     * Registra l'invito all'interno del database
+     * Registra la nuova entità nel database
      *
-     * @param invito L'invito da registrare
+     * @param entita L'entità da registrare
      */
-    public void registraInvito(Invito invito) {
-        super.crea(invito);
+    public void crea(E entita) {
+        Session session = Hibernate.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.persist(entita);
+        transaction.commit();
+        session.close();
+    }
+
+    /**
+     * Aggiorna l'entità nel database
+     */
+    public E aggiorna(E entita) {
+        Session session = Hibernate.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        E entitaAggiornata = session.merge(entita);
+        transaction.commit();
+        session.close();
+        return entitaAggiornata;
     }
 }

@@ -29,17 +29,15 @@ import it.unicam.ids.rcs.model.Hackaton;
 import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.util.Hibernate;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Questa classe rappresenta l'entità che interagisce con il database, eseguendo operazioni CRUD
  * in base alle richieste inviate dal controller.
  */
-public class HackatonRepository {
+public class HackatonRepository extends GenericRepository<Hackaton> {
 
     public HackatonRepository() {
     }
@@ -50,12 +48,17 @@ public class HackatonRepository {
      * @param hackaton L'hackaton da registrare sul database.
      */
     public void registraHackaton(Hackaton hackaton) {
-        Session session = Hibernate.getSessionFactory().openSession();
-        session.beginTransaction();
-        Transaction transaction = session.beginTransaction();
-        session.persist(hackaton);
-        transaction.commit();
-        session.close();
+        super.crea(hackaton);
+    }
+
+    /**
+     * Aggiorna i dati dell'hackaton fornito
+     *
+     * @param hackaton L'hackaton con i dati aggiornati
+     * @return L'hackaton aggiornato
+     */
+    public Hackaton aggiornaHackaton(Hackaton hackaton) {
+        return super.aggiorna(hackaton);
     }
 
     /**
@@ -83,31 +86,15 @@ public class HackatonRepository {
     public List<Hackaton> getHackatonsConIscrizioniAperte(Utente organizzatoreHackaton) {
         LocalDate oggi = LocalDate.now();
         Session session = Hibernate.getSessionFactory().openSession();
-        List<Hackaton> hackatons = new ArrayList<>();
         String query = "from Hackaton" +
                 " where organizzatore = :organizzatoreHackaton" +
                 " and scadenzaIscrizioni >= :oggi" +
                 " and annullato == false";
-        hackatons = session.createQuery(query, Hackaton.class)
+        List<Hackaton> hackatons = session.createQuery(query, Hackaton.class)
                 .setParameter("organizzatoreHackaton", organizzatoreHackaton)
                 .setParameter("oggi", oggi)
                 .getResultList();
         session.close();
         return hackatons;
-    }
-
-    /**
-     * Aggiorna i dati dell'hackaton fornito
-     *
-     * @param hackaton L'hackaton con i dati aggiornati
-     * @return L'hackaton aggiornato
-     */
-    public Hackaton aggiornaHackaton(Hackaton hackaton) {
-        Session session = Hibernate.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        Hackaton hackatonAggiornato = session.merge(hackaton);
-        transaction.commit();
-        session.close();
-        return hackatonAggiornato;
     }
 }

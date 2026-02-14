@@ -21,41 +21,37 @@ package it.unicam.ids.rcs.repository;
 import it.unicam.ids.rcs.model.Team;
 import it.unicam.ids.rcs.util.Hibernate;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  * Questa classe rappresenta l'entità che interagisce con il database, eseguendo operazioni CRUD
  * in base alle richieste inviate dal controller.
  */
-public class TeamRepository {
+public class TeamRepository extends GenericRepository<Team> {
 
     public TeamRepository() {
     }
 
     /**
-     * Esegue la ricerca del team nel database attraverso il nome.
-     * @param nome
-     * @return il <code>Team</code> registrato nel database con quel nome, <code>null</code> altrimenti.
+     * Questo metodo si occupa di scrivere e salvare il team all'interno del database.
+     *
+     * @param team
      */
-    public Team cercaPerNome(String nome){
-        Session session = Hibernate.getSessionFactory().openSession();
-        Team team = session.createQuery("from Team where nome = :nome",Team.class)
-                .setParameter("nome",nome)
-                .uniqueResult();
-        session.close();
-        return team;
+    public void registraTeam(Team team) {
+        super.crea(team);
     }
 
     /**
-     * Questo metodo si occupa di scrivere e salvare il team all'interno del database.
-     * @param team
+     * Esegue la ricerca del team nel database attraverso il nome.
+     *
+     * @param nome
+     * @return il <code>Team</code> registrato nel database con quel nome, <code>null</code> altrimenti.
      */
-    public void registraTeam(Team team){
+    public Team cercaPerNome(String nome) {
         Session session = Hibernate.getSessionFactory().openSession();
-        session.beginTransaction();
-        Transaction transaction = session.beginTransaction();
-        session.persist(team);
-        transaction.commit();
+        Team team = session.createQuery("from Team where nome = :nome", Team.class)
+                .setParameter("nome", nome)
+                .uniqueResult();
         session.close();
+        return team;
     }
 }
