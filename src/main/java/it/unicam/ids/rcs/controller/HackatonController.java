@@ -238,6 +238,17 @@ public class HackatonController {
     }
 
     /**
+     * Questo metodo esegue la richiesta verso la repository degli hackaton
+     * per recuperare tutti gli hackaton ancora aperti creati da quello specifico
+     * utente.
+     * @return una lista di <code>Hackaton</code>
+     */
+    public List<Hackaton> getListaHackatonAnnullabili() {
+        Utente organizzatore = UtenteController.getUtenteInSessione();
+        return this.hackatonRepository.getHackatonsConIscrizioniAperte(organizzatore);
+    }
+
+    /**
      * Dato il nome di un hackaton, lo seleziona per poter essere modificato
      *
      * @param nomeHackaton Il nome dell'hackaton da selezionare
@@ -356,5 +367,17 @@ public class HackatonController {
      */
     public Hackaton cercaHackaton(String nome) {
         return this.getHackatonRepository().cercaPerNome(nome);
+    }
+
+    /**
+     * Questo metodo si occupa di confermare l'operazione di annullamento di hackaton
+     * impostando il suo stato di annullato a true ed aggiornandolo all'interno del database.
+     * @return l'<code>Hackaton</code> annullato
+     */
+    public Hackaton confermaAnnullamento() {
+        this.hackaton.setAnnullato(true);
+        this.hackatonRepository.aggiornaHackaton(this.hackaton);
+        //TODO notificaHackatonAnnullato
+        return this.hackaton;
     }
 }
