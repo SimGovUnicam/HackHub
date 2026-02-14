@@ -23,40 +23,45 @@
  *
  */
 
-package it.unicam.ids.rcs.model.notifica;
+package it.unicam.ids.rcs.model.invito;
 
-
-import it.unicam.ids.rcs.model.Hackaton;
+import it.unicam.ids.rcs.model.Team;
 import it.unicam.ids.rcs.model.Utente;
 import jdk.jshell.spi.ExecutionControl;
 
 /**
- * Questa classe estende la classe notifica
- * Questa classe rappresenta una notifica per la creazione dell'Hackaton
- * Questa classe fa parte del design pattern Factory Method e svolge
- * il ruolo di Prodotto Concreto
+ * Questa classe rappresenta un invito di adesione a un team. Il mittente ha
+ * invitato l'invitato a far parte del suo team
  */
-public class NotificaCreazioneHackaton extends Notifica {
-    private Hackaton hackaton;
-
-    public NotificaCreazioneHackaton(Utente mittente, Utente destinatario, Hackaton hackaton) {
-        super(mittente, destinatario);
-        this.hackaton = hackaton;
+public class InvitoAdesioneTeam extends Invito {
+    public InvitoAdesioneTeam(Utente mittente, Utente invitato) {
+        super(mittente, invitato);
     }
 
     @Override
-    public String ottieniMessaggioPerOrganizzatore() {
-        return this.setMessaggio("É stato creato un nuovo Hackaton: " + hackaton.getNome());
+    protected void elaboraAccettazione() {
+        Team teamMittente = this.getMittente().getTeam();
+        teamMittente.aggiungiMembro(this.getInvitato());
     }
 
     @Override
-    public String ottieniMessaggioPerGiudice() {
-        return this.setMessaggio("É stato creato un nuovo Hackaton: " + hackaton.getNome());
+    protected void elaboraDeclinazione() {
+        // Invito declinato, nessuna operazione necessaria
     }
 
     @Override
-    public String ottieniMessaggioPerMentore() {
-        return this.setMessaggio("É stato creato un nuovo Hackaton: " + hackaton.getNome());
+    public String ottieniMessaggioPerOrganizzatore() throws ExecutionControl.NotImplementedException {
+        throw new ExecutionControl.NotImplementedException("Messaggio per Organizzatore non previsto");
+    }
+
+    @Override
+    public String ottieniMessaggioPerGiudice() throws ExecutionControl.NotImplementedException {
+        throw new ExecutionControl.NotImplementedException("Messaggio per Giudice non previsto");
+    }
+
+    @Override
+    public String ottieniMessaggioPerMentore() throws ExecutionControl.NotImplementedException {
+        throw new ExecutionControl.NotImplementedException("Messaggio per Mentore non previsto");
     }
 
     @Override
@@ -66,10 +71,11 @@ public class NotificaCreazioneHackaton extends Notifica {
 
     @Override
     public String ottieniMessaggioPerMembroDelTeam() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per membro del team non previsto");
+        throw new ExecutionControl.NotImplementedException("Messaggio per membro dello team non previsto");
     }
 
-    public String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per utente non previsto");
+    @Override
+    public String ottieniMessaggioPerUtente() {
+        return this.getMittente().getNome() + "ti ha invitato ad unirti al team" + this.getMittente().getTeam().getNome();
     }
 }

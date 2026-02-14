@@ -25,53 +25,49 @@
 
 package it.unicam.ids.rcs.model.notifica;
 
-import it.unicam.ids.rcs.model.Hackaton;
 import it.unicam.ids.rcs.model.Utente;
+import it.unicam.ids.rcs.model.invito.Invito;
 import jdk.jshell.spi.ExecutionControl;
 
-/**
- * Questa classe estende la classe notifica
- * Questa classe rappresenta una notifica per la modifica dell'Hackaton
- * Questa classe fa parte del design pattern Factory Method e svolge
- * il ruolo di Prodotto Concreto
- */
-public class NotificaModificaHackaton extends Notifica {
-    private Hackaton hackaton;
+public class NotificaInvito extends Notifica {
+    private Invito invito;
 
-    public NotificaModificaHackaton(Utente mittente, Utente destinatario, Hackaton hackaton) {
-        super(mittente, destinatario);
-        this.hackaton = hackaton;
+    public NotificaInvito(Utente mittente, Utente desinatario, Invito invito) {
+        super(mittente, desinatario);
+        this.invito = invito;
+    }
+
+    private Invito getInvito() {
+        return this.invito;
     }
 
     @Override
-    public String ottieniMessaggioPerOrganizzatore() {
-        return this.setMessaggio("L'hackaton " + hackaton.getNome() + " è stato modificato.");
+    public String ottieniMessaggioPerOrganizzatore() throws ExecutionControl.NotImplementedException {
+        return this.setMessaggio(this.getInvito().ottieniMessaggioPerOrganizzatore());
     }
 
     @Override
-    public String ottieniMessaggioPerGiudice() {
-        return this.setMessaggio("L'hackaton " + hackaton.getNome() + " è stato modificato.");
+    public String ottieniMessaggioPerGiudice() throws ExecutionControl.NotImplementedException {
+        return this.setMessaggio(this.getInvito().ottieniMessaggioPerGiudice());
     }
 
     @Override
-    public String ottieniMessaggioPerMentore() {
-        return this.setMessaggio("L'hackaton " + hackaton.getNome() + " è stato modificato.");
+    public String ottieniMessaggioPerMentore() throws ExecutionControl.NotImplementedException {
+        return this.setMessaggio(this.getInvito().ottieniMessaggioPerMentore());
     }
 
     @Override
     public String ottieniMessaggioPerMembroDelloStaff() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per membro dello staff non previsto");
+        return this.setMessaggio(this.getInvito().ottieniMessaggioPerMembroDelloStaff());
     }
 
     @Override
-    public String ottieniMessaggioPerMembroDelTeam() {
-        return this.setMessaggio("L'hackaton " + hackaton.getNome() + " è stato modificato.");
+    public String ottieniMessaggioPerMembroDelTeam() throws ExecutionControl.NotImplementedException {
+        return this.setMessaggio(this.getInvito().ottieniMessaggioPerMembroDelTeam());
     }
 
     @Override
-
     public String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per membro dello staff non previsto");
+        return this.setMessaggio(this.getInvito().ottieniMessaggioPerUtente());
     }
-
 }

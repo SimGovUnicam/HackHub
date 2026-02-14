@@ -25,14 +25,18 @@
 
 package it.unicam.ids.rcs.util.notifica;
 
-import it.unicam.ids.rcs.model.*;
+import it.unicam.ids.rcs.model.Hackaton;
+import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.model.notifica.Notifica;
 import it.unicam.ids.rcs.model.notifica.NotificaModificaHackaton;
 
 /**
- *
+ * Questa classe viene usata per la creazione delle notifiche
+ * per la modifica dell'Hackaton
+ * Questa classe fa parte del design pattern Factory Method e svolge
+ * il ruolo di Creatore Concreto
  */
-public class NotificaModificaHackatonFactory extends NotificaFactory{
+public class NotificaModificaHackatonFactory extends NotificaFactory {
     private Hackaton hackaton;
 
     public NotificaModificaHackatonFactory(Hackaton hackaton) {
