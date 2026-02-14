@@ -41,7 +41,7 @@ public class InvitoController {
      * @param emailUtenteDaInvitare
      * @return
      */
-    public InvitoAdesioneTeam creaInvitoAdesioneTeam(String emailUtenteDaInvitare) {
+    public Invito creaInvitoAdesioneTeam(String emailUtenteDaInvitare) {
         Utente utenteDaInvitare = this.utenteController.cercaUtente(emailUtenteDaInvitare);
         if(utenteDaInvitare==null)
             return null;
@@ -50,8 +50,7 @@ public class InvitoController {
 
         Utente mittenteInvito = UtenteController.getUtenteInSessione();
         this.invito = new InvitoAdesioneTeam(mittenteInvito, utenteDaInvitare);
-        return null;
-        //TODO da rivedere
+        return this.invito;
     }
 
     /**

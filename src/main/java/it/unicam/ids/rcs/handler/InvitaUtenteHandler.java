@@ -20,6 +20,7 @@ package it.unicam.ids.rcs.handler;
 
 import it.unicam.ids.rcs.controller.InvitoController;
 import it.unicam.ids.rcs.controller.UtenteController;
+import it.unicam.ids.rcs.model.invito.Invito;
 import it.unicam.ids.rcs.model.notifica.InvitoAdesioneTeam;
 import it.unicam.ids.rcs.repository.InvitoRepository;
 import it.unicam.ids.rcs.repository.UtenteRepository;
@@ -35,7 +36,7 @@ public class InvitaUtenteHandler {
      * @param emailUtenteDaInvitare
      * @return
      */
-    public InvitoAdesioneTeam invitaUtente(String emailUtenteDaInvitare){
+    public Invito invitaUtente(String emailUtenteDaInvitare){
         UtenteRepository utenteRepository = new UtenteRepository();
         UtenteController utenteController = new UtenteController(utenteRepository);
         InvitoRepository invitoRepository = new InvitoRepository();
