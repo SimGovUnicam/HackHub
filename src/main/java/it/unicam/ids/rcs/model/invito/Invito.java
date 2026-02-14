@@ -26,13 +26,15 @@
 package it.unicam.ids.rcs.model.invito;
 
 import it.unicam.ids.rcs.model.Utente;
+import it.unicam.ids.rcs.model.notifica.Notificabile;
+import jdk.jshell.spi.ExecutionControl;
 
 /**
  * Questa classe rappresenta un invito, ovvero una richiesta fatta da un utente
  * a un altro che può essere accettata o declinata (ma non entrambe).
  * Per farlo, questa classe utilizza il design pattern Template Method
  */
-public abstract class Invito {
+public abstract class Invito implements Notificabile {
     private Utente mittente;
     private Utente invitato;
     private StatoInvito stato = StatoInvito.IN_ATTESA;
@@ -113,4 +115,22 @@ public abstract class Invito {
      * Questo metodo effettua le operazioni necessarie alla declinazione dell'invito
      */
     protected abstract void elaboraDeclinazione();
+
+    @Override
+    public abstract String ottieniMessaggioPerOrganizzatore() throws ExecutionControl.NotImplementedException;
+
+    @Override
+    public abstract String ottieniMessaggioPerGiudice() throws ExecutionControl.NotImplementedException;
+
+    @Override
+    public abstract String ottieniMessaggioPerMentore() throws ExecutionControl.NotImplementedException;
+
+    @Override
+    public abstract String ottieniMessaggioPerMembroDelloStaff() throws ExecutionControl.NotImplementedException;
+
+    @Override
+    public abstract String ottieniMessaggioPerMembroDelTeam() throws ExecutionControl.NotImplementedException;
+
+    @Override
+    public abstract String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException;
 }

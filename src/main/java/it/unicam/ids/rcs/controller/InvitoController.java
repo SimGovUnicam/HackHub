@@ -20,7 +20,7 @@ package it.unicam.ids.rcs.controller;
 
 import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.model.invito.Invito;
-import it.unicam.ids.rcs.model.notifica.InvitoAdesioneTeam;
+import it.unicam.ids.rcs.model.invito.InvitoAdesioneTeam;
 import it.unicam.ids.rcs.repository.InvitoRepository;
 
 /**

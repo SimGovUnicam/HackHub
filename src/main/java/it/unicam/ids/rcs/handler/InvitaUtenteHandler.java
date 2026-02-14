@@ -21,7 +21,6 @@ package it.unicam.ids.rcs.handler;
 import it.unicam.ids.rcs.controller.InvitoController;
 import it.unicam.ids.rcs.controller.UtenteController;
 import it.unicam.ids.rcs.model.invito.Invito;
-import it.unicam.ids.rcs.model.notifica.InvitoAdesioneTeam;
 import it.unicam.ids.rcs.repository.InvitoRepository;
 import it.unicam.ids.rcs.repository.UtenteRepository;
 

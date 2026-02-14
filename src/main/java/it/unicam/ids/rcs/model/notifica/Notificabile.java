@@ -25,27 +25,18 @@
 
 package it.unicam.ids.rcs.model.notifica;
 
-import it.unicam.ids.rcs.model.Team;
-import it.unicam.ids.rcs.model.Utente;
-import it.unicam.ids.rcs.model.invito.Invito;
+import jdk.jshell.spi.ExecutionControl;
 
-/**
- * Questa classe rappresenta un invito di adesione a un team. Il mittente ha
- * invitato l'invitato a far parte del suo team
- */
-public class InvitoAdesioneTeam extends Invito {
-    public InvitoAdesioneTeam(Utente mittente, Utente invitato) {
-        super(mittente, invitato);
-    }
+public interface Notificabile {
+    String ottieniMessaggioPerOrganizzatore() throws ExecutionControl.NotImplementedException;
 
-    @Override
-    protected void elaboraAccettazione() {
-        Team teamMittente = this.getMittente().getTeam();
-        teamMittente.aggiungiMembro(this.getInvitato());
-    }
+    String ottieniMessaggioPerGiudice() throws ExecutionControl.NotImplementedException;
 
-    @Override
-    protected void elaboraDeclinazione() {
-        // Invito declinato, nessuna operazione necessaria
-    }
+    String ottieniMessaggioPerMentore() throws ExecutionControl.NotImplementedException;
+
+    String ottieniMessaggioPerMembroDelloStaff() throws ExecutionControl.NotImplementedException;
+
+    String ottieniMessaggioPerMembroDelTeam() throws ExecutionControl.NotImplementedException;
+
+    String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException;
 }

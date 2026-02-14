@@ -27,13 +27,14 @@
 package it.unicam.ids.rcs.model.notifica;
 
 import it.unicam.ids.rcs.model.Utente;
-
 import jdk.jshell.spi.ExecutionControl;
 
-/*
-Questa classe viene usata per la gestione delle notifiche  
+/**
+ * Questa classe viene usata per la gestione delle notifiche
+ * Questa classe fa parte del design pattern Factory Method e svolge
+ * il ruolo di Prodotto
  */
-public abstract class Notifica {
+public abstract class Notifica implements Notificabile {
     private Utente mittente;
     private Utente destinatario;
     private String messaggio;
