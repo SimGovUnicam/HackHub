@@ -25,9 +25,14 @@
 
 package it.unicam.ids.rcs.util.notifica;
 
-import it.unicam.ids.rcs.model.notifica.Notifica;
 import it.unicam.ids.rcs.model.Utente;
+import it.unicam.ids.rcs.model.notifica.Notifica;
 
+/**
+ * Questa classe viene usata per la creazione delle notifiche
+ * Questa classe fa parte del design pattern Factory Method e svolge
+ * il ruolo di Creatore
+ */
 public abstract class NotificaFactory {
-    public abstract Notifica getNotifica(Utente  mittente, Utente destinatario);
+    public abstract Notifica getNotifica(Utente mittente, Utente destinatario);
 }

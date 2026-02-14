@@ -27,13 +27,13 @@ package it.unicam.ids.rcs.model.notifica;
 
 import it.unicam.ids.rcs.model.Hackaton;
 import it.unicam.ids.rcs.model.Utente;
-
 import jdk.jshell.spi.ExecutionControl;
 
 /**
- * Questa classe estende la classe Notifica, invia una notifica a Organizzatore,
- * Giudice, Mentore, Membro del team, a seguito delle modifiche effettuate
- * dall'organizzatore all'Hackaton
+ * Questa classe estende la classe notifica
+ * Questa classe rappresenta una notifica per la modifica dell'Hackaton
+ * Questa classe fa parte del design pattern Factory Method e svolge
+ * il ruolo di Prodotto Concreto
  */
 public class NotificaModificaHackaton extends Notifica {
     private Hackaton hackaton;
@@ -67,6 +67,7 @@ public class NotificaModificaHackaton extends Notifica {
     public String ottieniMessaggioPerMembroDelTeam() {
         return this.setMessaggio("L'hackaton " + hackaton.getNome() + " è stato modificato.");
     }
+
     @Override
 
     public String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException {

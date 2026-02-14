@@ -25,14 +25,17 @@
 
 package it.unicam.ids.rcs.model.notifica;
 
-/* Questa classe estende la classe notifica,
- invia una notifica a Organizzatore, Giudice, Mentore nel momento della creazione dell'Hackaton*/
 
 import it.unicam.ids.rcs.model.Hackaton;
 import it.unicam.ids.rcs.model.Utente;
-
 import jdk.jshell.spi.ExecutionControl;
 
+/**
+ * Questa classe estende la classe notifica
+ * Questa classe rappresenta una notifica per la creazione dell'Hackaton
+ * Questa classe fa parte del design pattern Factory Method e svolge
+ * il ruolo di Prodotto Concreto
+ */
 public class NotificaCreazioneHackaton extends Notifica {
     private Hackaton hackaton;
 
