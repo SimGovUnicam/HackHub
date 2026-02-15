@@ -75,10 +75,13 @@ public abstract class Invito implements Notificabile {
      * pattern: Template Method) e non può essere sovrascritto. La logica di
      * accettazione effettiva deve essere definita implementando il metodo
      * astratto `elaboraAccettazione()`]
+     *
+     * @throws IllegalStateException Se l'invito non è IN_ATTESA, ovvero se è
+     *                               già stato accettato o declinato
      */
-    public final void accetta() {
+    public final void accetta() throws IllegalStateException {
         if (this.getStato() != StatoInvito.IN_ATTESA) {
-            return;
+            throw new IllegalStateException("Impossibile accettare un invito già accettato/declinato");
         }
 
         this.elaboraAccettazione();
@@ -99,10 +102,13 @@ public abstract class Invito implements Notificabile {
      * pattern: Template Method) e non può essere sovrascritto. La logica di
      * declinazione effettiva deve essere definita implementando il metodo astratto
      * `elaboraDeclinazione()`]
+     *
+     * @throws IllegalStateException Se l'invito non è IN_ATTESA, ovvero se è
+     *                               già stato accettato o declinato
      */
-    public final void declina() {
+    public final void declina() throws IllegalStateException {
         if (this.getStato() != StatoInvito.IN_ATTESA) {
-            return;
+            throw new IllegalStateException("Impossibile declinare un invito già accettato/declinato");
         }
 
         this.elaboraDeclinazione();
