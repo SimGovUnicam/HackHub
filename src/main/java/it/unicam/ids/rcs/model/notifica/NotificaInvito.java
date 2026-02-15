@@ -27,7 +27,6 @@ package it.unicam.ids.rcs.model.notifica;
 
 import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.model.invito.Invito;
-import jdk.jshell.spi.ExecutionControl;
 
 public class NotificaInvito extends Notifica {
     private Invito invito;
@@ -42,32 +41,32 @@ public class NotificaInvito extends Notifica {
     }
 
     @Override
-    public String ottieniMessaggioPerOrganizzatore() throws ExecutionControl.NotImplementedException {
+    public String ottieniMessaggioPerOrganizzatore() throws UnsupportedOperationException {
         return this.setMessaggio(this.getInvito().ottieniMessaggioPerOrganizzatore());
     }
 
     @Override
-    public String ottieniMessaggioPerGiudice() throws ExecutionControl.NotImplementedException {
+    public String ottieniMessaggioPerGiudice() throws UnsupportedOperationException {
         return this.setMessaggio(this.getInvito().ottieniMessaggioPerGiudice());
     }
 
     @Override
-    public String ottieniMessaggioPerMentore() throws ExecutionControl.NotImplementedException {
+    public String ottieniMessaggioPerMentore() throws UnsupportedOperationException {
         return this.setMessaggio(this.getInvito().ottieniMessaggioPerMentore());
     }
 
     @Override
-    public String ottieniMessaggioPerMembroDelloStaff() throws ExecutionControl.NotImplementedException {
+    public String ottieniMessaggioPerMembroDelloStaff() throws UnsupportedOperationException {
         return this.setMessaggio(this.getInvito().ottieniMessaggioPerMembroDelloStaff());
     }
 
     @Override
-    public String ottieniMessaggioPerMembroDelTeam() throws ExecutionControl.NotImplementedException {
+    public String ottieniMessaggioPerMembroDelTeam() throws UnsupportedOperationException {
         return this.setMessaggio(this.getInvito().ottieniMessaggioPerMembroDelTeam());
     }
 
     @Override
-    public String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException {
+    public String ottieniMessaggioPerUtente() throws UnsupportedOperationException {
         return this.setMessaggio(this.getInvito().ottieniMessaggioPerUtente());
     }
 }

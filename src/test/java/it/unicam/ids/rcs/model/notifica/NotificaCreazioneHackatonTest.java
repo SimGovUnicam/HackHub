@@ -2,7 +2,6 @@ package it.unicam.ids.rcs.model.notifica;
 
 import it.unicam.ids.rcs.model.Hackaton;
 import it.unicam.ids.rcs.model.Utente;
-import jdk.jshell.spi.ExecutionControl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -49,18 +48,18 @@ public class NotificaCreazioneHackatonTest {
 
     @Test
     void testMessaggioPerMembroDelloStaffNonSupportato() {
-        assertThrows(ExecutionControl.NotImplementedException.class, () -> notifica.ottieniMessaggioPerMembroDelloStaff());
+        assertThrows(UnsupportedOperationException.class, () -> notifica.ottieniMessaggioPerMembroDelloStaff());
     }
 
     @Test
     void testMessaggioPerMembroDelTeamNonsupportato() {
-        assertThrows(ExecutionControl.NotImplementedException.class, () -> notifica.ottieniMessaggioPerMembroDelTeam());
+        assertThrows(UnsupportedOperationException.class, () -> notifica.ottieniMessaggioPerMembroDelTeam());
 
     }
 
     @Test
     void testMessaggioPerUtenteNonSupportato() {
-        assertThrows(ExecutionControl.NotImplementedException.class, () -> notifica.ottieniMessaggioPerUtente());
+        assertThrows(UnsupportedOperationException.class, () -> notifica.ottieniMessaggioPerUtente());
 
     }
 }

@@ -27,7 +27,6 @@ package it.unicam.ids.rcs.model.invito;
 
 import it.unicam.ids.rcs.model.Team;
 import it.unicam.ids.rcs.model.Utente;
-import jdk.jshell.spi.ExecutionControl;
 
 /**
  * Questa classe rappresenta un invito di adesione a un team. Il mittente ha
@@ -50,28 +49,28 @@ public class InvitoAdesioneTeam extends Invito {
     }
 
     @Override
-    public String ottieniMessaggioPerOrganizzatore() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per Organizzatore non previsto");
+    public String ottieniMessaggioPerOrganizzatore() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Messaggio per Organizzatore non previsto");
     }
 
     @Override
-    public String ottieniMessaggioPerGiudice() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per Giudice non previsto");
+    public String ottieniMessaggioPerGiudice() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Messaggio per Giudice non previsto");
     }
 
     @Override
-    public String ottieniMessaggioPerMentore() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per Mentore non previsto");
+    public String ottieniMessaggioPerMentore() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Messaggio per Mentore non previsto");
     }
 
     @Override
-    public String ottieniMessaggioPerMembroDelloStaff() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per membro dello staff non previsto");
+    public String ottieniMessaggioPerMembroDelloStaff() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Messaggio per membro dello staff non previsto");
     }
 
     @Override
-    public String ottieniMessaggioPerMembroDelTeam() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per membro dello team non previsto");
+    public String ottieniMessaggioPerMembroDelTeam() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Messaggio per membro dello team non previsto");
     }
 
     @Override

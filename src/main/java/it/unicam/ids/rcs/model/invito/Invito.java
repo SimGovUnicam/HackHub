@@ -27,7 +27,6 @@ package it.unicam.ids.rcs.model.invito;
 
 import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.model.notifica.Notificabile;
-import jdk.jshell.spi.ExecutionControl;
 
 /**
  * Questa classe rappresenta un invito, ovvero una richiesta fatta da un utente
@@ -117,20 +116,20 @@ public abstract class Invito implements Notificabile {
     protected abstract void elaboraDeclinazione();
 
     @Override
-    public abstract String ottieniMessaggioPerOrganizzatore() throws ExecutionControl.NotImplementedException;
+    public abstract String ottieniMessaggioPerOrganizzatore() throws UnsupportedOperationException;
 
     @Override
-    public abstract String ottieniMessaggioPerGiudice() throws ExecutionControl.NotImplementedException;
+    public abstract String ottieniMessaggioPerGiudice() throws UnsupportedOperationException;
 
     @Override
-    public abstract String ottieniMessaggioPerMentore() throws ExecutionControl.NotImplementedException;
+    public abstract String ottieniMessaggioPerMentore() throws UnsupportedOperationException;
 
     @Override
-    public abstract String ottieniMessaggioPerMembroDelloStaff() throws ExecutionControl.NotImplementedException;
+    public abstract String ottieniMessaggioPerMembroDelloStaff() throws UnsupportedOperationException;
 
     @Override
-    public abstract String ottieniMessaggioPerMembroDelTeam() throws ExecutionControl.NotImplementedException;
+    public abstract String ottieniMessaggioPerMembroDelTeam() throws UnsupportedOperationException;
 
     @Override
-    public abstract String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException;
+    public abstract String ottieniMessaggioPerUtente() throws UnsupportedOperationException;
 }

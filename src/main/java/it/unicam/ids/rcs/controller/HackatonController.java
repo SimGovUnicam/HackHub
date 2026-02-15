@@ -26,15 +26,14 @@
 package it.unicam.ids.rcs.controller;
 
 import it.unicam.ids.rcs.model.Hackaton;
-import it.unicam.ids.rcs.model.notifica.Notifica;
 import it.unicam.ids.rcs.model.Utente;
+import it.unicam.ids.rcs.model.notifica.Notifica;
 import it.unicam.ids.rcs.repository.HackatonRepository;
-import it.unicam.ids.rcs.util.*;
+import it.unicam.ids.rcs.util.ValidatoreHackaton;
 import it.unicam.ids.rcs.util.notifica.GestoreNotifiche;
 import it.unicam.ids.rcs.util.notifica.NotificaCreazioneHackatonFactory;
 import it.unicam.ids.rcs.util.notifica.NotificaFactory;
 import it.unicam.ids.rcs.util.notifica.NotificaModificaHackatonFactory;
-import jdk.jshell.spi.ExecutionControl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -54,7 +53,7 @@ public class HackatonController {
         this.utenteController = new UtenteController();
     }
 
-    public HackatonController(HackatonRepository hackatonRepository){
+    public HackatonController(HackatonRepository hackatonRepository) {
         this.hackatonRepository = hackatonRepository;
         this.utenteController = new UtenteController();
     }
@@ -208,7 +207,7 @@ public class HackatonController {
         try {
             notificaPerOrganizzatore.ottieniMessaggioPerOrganizzatore();
             notificaPerGiudice.ottieniMessaggioPerGiudice();
-        } catch (ExecutionControl.NotImplementedException e) {
+        } catch (UnsupportedOperationException e) {
             System.out.println("Eccezione in notificaHackatonCreato: " + e.getMessage()); // TODO rimuovere dopo porting su Springboot
             return;
         }
@@ -217,7 +216,7 @@ public class HackatonController {
             var notificaPerMentore = factory.getNotifica(hackaton.getOrganizzatore(), mentore);
             try {
                 notificaPerMentore.ottieniMessaggioPerMentore();
-            } catch (ExecutionControl.NotImplementedException e) {
+            } catch (UnsupportedOperationException e) {
                 System.out.println("Eccezione in notificaHackatonCreato: " + e.getMessage()); // TODO rimuovere dopo porting su Springboot
                 return;
             }
@@ -241,6 +240,7 @@ public class HackatonController {
      * Questo metodo esegue la richiesta verso la repository degli hackaton
      * per recuperare tutti gli hackaton ancora aperti creati da quello specifico
      * utente.
+     *
      * @return una lista di <code>Hackaton</code>
      */
     public List<Hackaton> getListaHackatonAnnullabili() {
@@ -307,7 +307,7 @@ public class HackatonController {
         var gestoreNotifiche = new GestoreNotifiche();
         try {
             notificaPerGiudice.ottieniMessaggioPerGiudice();
-        } catch (ExecutionControl.NotImplementedException e) {
+        } catch (UnsupportedOperationException e) {
             System.out.println("Eccezione in notificaHackatonModificato: " + e.getMessage()); // TODO rimuovere dopo porting su Springboot
             return;
         }
@@ -318,7 +318,7 @@ public class HackatonController {
             Notifica notificaPerMentore = notificaFactory.getNotifica(hackaton.getOrganizzatore(), mentore);
             try {
                 notificaPerMentore.ottieniMessaggioPerMentore();
-            } catch (ExecutionControl.NotImplementedException e) {
+            } catch (UnsupportedOperationException e) {
                 System.out.println("Eccezione in notificaHackatonModificato: " + e.getMessage()); // TODO rimuovere dopo porting su Springboot
                 return;
             }
@@ -372,12 +372,13 @@ public class HackatonController {
     /**
      * Questo metodo si occupa di confermare l'operazione di annullamento di hackaton
      * impostando il suo stato di annullato a true ed aggiornandolo all'interno del database.
+     *
      * @return l'<code>Hackaton</code> annullato
      */
     public Hackaton confermaAnnullamento() {
         this.hackaton.setAnnullato(true);
         this.hackatonRepository.aggiornaHackaton(this.hackaton);
-        //TODO notificaHackatonAnnullato
+        // TODO notificaHackatonAnnullato
         return this.hackaton;
     }
 }

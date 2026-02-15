@@ -25,18 +25,16 @@
 
 package it.unicam.ids.rcs.model.notifica;
 
-import jdk.jshell.spi.ExecutionControl;
-
 public interface Notificabile {
-    String ottieniMessaggioPerOrganizzatore() throws ExecutionControl.NotImplementedException;
+    String ottieniMessaggioPerOrganizzatore() throws UnsupportedOperationException;
 
-    String ottieniMessaggioPerGiudice() throws ExecutionControl.NotImplementedException;
+    String ottieniMessaggioPerGiudice() throws UnsupportedOperationException;
 
-    String ottieniMessaggioPerMentore() throws ExecutionControl.NotImplementedException;
+    String ottieniMessaggioPerMentore() throws UnsupportedOperationException;
 
-    String ottieniMessaggioPerMembroDelloStaff() throws ExecutionControl.NotImplementedException;
+    String ottieniMessaggioPerMembroDelloStaff() throws UnsupportedOperationException;
 
-    String ottieniMessaggioPerMembroDelTeam() throws ExecutionControl.NotImplementedException;
+    String ottieniMessaggioPerMembroDelTeam() throws UnsupportedOperationException;
 
-    String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException;
+    String ottieniMessaggioPerUtente() throws UnsupportedOperationException;
 }

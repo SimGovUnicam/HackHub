@@ -28,7 +28,6 @@ package it.unicam.ids.rcs.model.notifica;
 
 import it.unicam.ids.rcs.model.Hackaton;
 import it.unicam.ids.rcs.model.Utente;
-import jdk.jshell.spi.ExecutionControl;
 
 /**
  * Questa classe estende la classe notifica
@@ -60,16 +59,16 @@ public class NotificaCreazioneHackaton extends Notifica {
     }
 
     @Override
-    public String ottieniMessaggioPerMembroDelloStaff() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per membro dello staff non previsto");
+    public String ottieniMessaggioPerMembroDelloStaff() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Messaggio per membro dello staff non previsto");
     }
 
     @Override
-    public String ottieniMessaggioPerMembroDelTeam() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per membro del team non previsto");
+    public String ottieniMessaggioPerMembroDelTeam() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Messaggio per membro del team non previsto");
     }
 
-    public String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("Messaggio per utente non previsto");
+    public String ottieniMessaggioPerUtente() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Messaggio per utente non previsto");
     }
 }

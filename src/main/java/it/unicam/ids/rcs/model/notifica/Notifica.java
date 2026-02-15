@@ -27,7 +27,6 @@
 package it.unicam.ids.rcs.model.notifica;
 
 import it.unicam.ids.rcs.model.Utente;
-import jdk.jshell.spi.ExecutionControl;
 
 /**
  * Questa classe viene usata per la gestione delle notifiche
@@ -72,17 +71,17 @@ public abstract class Notifica implements Notificabile {
         return messaggio;
     }
 
-    public abstract String ottieniMessaggioPerOrganizzatore() throws ExecutionControl.NotImplementedException;
+    public abstract String ottieniMessaggioPerOrganizzatore() throws UnsupportedOperationException;
 
-    public abstract String ottieniMessaggioPerGiudice() throws ExecutionControl.NotImplementedException;
+    public abstract String ottieniMessaggioPerGiudice() throws UnsupportedOperationException;
 
-    public abstract String ottieniMessaggioPerMentore() throws ExecutionControl.NotImplementedException;
+    public abstract String ottieniMessaggioPerMentore() throws UnsupportedOperationException;
 
-    public abstract String ottieniMessaggioPerMembroDelloStaff() throws ExecutionControl.NotImplementedException;
+    public abstract String ottieniMessaggioPerMembroDelloStaff() throws UnsupportedOperationException;
 
-    public abstract String ottieniMessaggioPerMembroDelTeam() throws ExecutionControl.NotImplementedException;
+    public abstract String ottieniMessaggioPerMembroDelTeam() throws UnsupportedOperationException;
 
-    public abstract String ottieniMessaggioPerUtente() throws ExecutionControl.NotImplementedException;
+    public abstract String ottieniMessaggioPerUtente() throws UnsupportedOperationException;
 }
 
 
