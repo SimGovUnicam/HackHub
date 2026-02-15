@@ -101,12 +101,10 @@ public class HackatonTest {
 
     public static Team creaTeam(int dimensioneMassima) {
         int dimensione = ThreadLocalRandom.current().nextInt(2, dimensioneMassima);
-        List<Utente> membriDelTeam = new LinkedList<>();
-        while (dimensione-- > 0) {
-            membriDelTeam.add(creaUtenteRandom());
-        }
         Team team = new Team();
-        team.setMembri(membriDelTeam);
+        while (dimensione-- > 0) {
+            team.aggiungiMembro(creaUtenteRandom());
+        }
         return team;
     }
 

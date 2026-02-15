@@ -73,7 +73,7 @@ public class Team {
      * @param nuovoMembro L'utente da aggiungere al team
      */
     public void aggiungiMembro(Utente nuovoMembro) {
-        this.getMembri().add(nuovoMembro);
+        this.membri.add(nuovoMembro);
         if (nuovoMembro.getTeam() == null || !nuovoMembro.getTeam().equals(this)) {
             nuovoMembro.setTeam(this);
         }
