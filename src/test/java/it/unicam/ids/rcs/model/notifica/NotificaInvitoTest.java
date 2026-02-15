@@ -63,26 +63,26 @@ class NotificaInvitoTest {
 
     @Test
     void testMessaggioPerMembroDelloStaffNonSupportato() {
-        assertThrows(ExecutionControl.NotImplementedException.class, () -> notifica.ottieniMessaggioPerMembroDelloStaff());
+        assertThrows(UnsupportedOperationException.class, () -> notifica.ottieniMessaggioPerMembroDelloStaff());
     }
 
     @Test
     void testMessaggioPerMembroDelTeamNonSupportato() {
-        assertThrows(ExecutionControl.NotImplementedException.class, () -> notifica.ottieniMessaggioPerMembroDelTeam());
+        assertThrows(UnsupportedOperationException.class, () -> notifica.ottieniMessaggioPerMembroDelTeam());
     }
 
     @Test
     void testMessaggioPerOrganizzatoreNonSupportato() {
-        assertThrows(ExecutionControl.NotImplementedException.class, () -> notifica.ottieniMessaggioPerOrganizzatore());
+        assertThrows(UnsupportedOperationException.class, () -> notifica.ottieniMessaggioPerOrganizzatore());
     }
 
     @Test
     void testMessaggioPerGiudiceNonSupportato() {
-        assertThrows(ExecutionControl.NotImplementedException.class, () -> notifica.ottieniMessaggioPerGiudice());
+        assertThrows(UnsupportedOperationException.class, () -> notifica.ottieniMessaggioPerGiudice());
     }
 
     @Test
     void testMessaggioPerMentoreNonSupportato() {
-        assertThrows(ExecutionControl.NotImplementedException.class, () -> notifica.ottieniMessaggioPerMentore());
+        assertThrows(UnsupportedOperationException.class, () -> notifica.ottieniMessaggioPerMentore());
     }
 }
