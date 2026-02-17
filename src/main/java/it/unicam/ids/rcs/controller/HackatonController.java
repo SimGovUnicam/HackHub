@@ -26,14 +26,12 @@
 package it.unicam.ids.rcs.controller;
 
 import it.unicam.ids.rcs.model.Hackaton;
+import it.unicam.ids.rcs.model.Team;
 import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.model.notifica.Notifica;
 import it.unicam.ids.rcs.repository.HackatonRepository;
 import it.unicam.ids.rcs.util.ValidatoreHackaton;
-import it.unicam.ids.rcs.util.notifica.GestoreNotifiche;
-import it.unicam.ids.rcs.util.notifica.NotificaCreazioneHackatonFactory;
-import it.unicam.ids.rcs.util.notifica.NotificaFactory;
-import it.unicam.ids.rcs.util.notifica.NotificaModificaHackatonFactory;
+import it.unicam.ids.rcs.util.notifica.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -371,14 +369,42 @@ public class HackatonController {
 
     /**
      * Questo metodo si occupa di confermare l'operazione di annullamento di hackaton
-     * impostando il suo stato di annullato a true ed aggiornandolo all'interno del database.
+     * impostando il suo stato di annullato a true e aggiornandolo all'interno del database.
      *
      * @return l'<code>Hackaton</code> annullato
      */
     public Hackaton confermaAnnullamento() {
         this.hackaton.setAnnullato(true);
         this.hackatonRepository.aggiornaHackaton(this.hackaton);
-        // TODO notificaHackatonAnnullato
+        this.inviaNotificaHackatonAnnullato();
         return this.hackaton;
+    }
+
+    /**
+     * Invia una notifica al destinatario dell'invito
+     */
+    private void inviaNotificaHackatonAnnullato() {
+        Hackaton hackaton = this.getHackaton();
+        NotificaFactory factory = new NotificaAnnullamentoHackatonFactory(hackaton);
+        List<Utente> membriIscritti = hackaton.getIscritti().stream()
+                .map(Team::getMembri)
+                .reduce((l1, l2) -> {
+                    l1.addAll(l2);
+                    return l1;
+                }).orElse(new ArrayList<>());
+
+        List<Utente> utentiDaNotificare = new ArrayList<>();
+        utentiDaNotificare.add(hackaton.getOrganizzatore());
+        utentiDaNotificare.add(hackaton.getGiudice());
+        utentiDaNotificare.addAll(hackaton.getMentori());
+        utentiDaNotificare.addAll(membriIscritti);
+
+        GestoreNotifiche gestoreNotifiche = new GestoreNotifiche();
+        Utente organizzatore = hackaton.getOrganizzatore();
+        for (Utente membro : utentiDaNotificare) {
+            Notifica notifica = factory.getNotifica(organizzatore, membro);
+            notifica.ottieniMessaggioPerUtente();
+            gestoreNotifiche.inviaNotifica(notifica);
+        }
     }
 }
