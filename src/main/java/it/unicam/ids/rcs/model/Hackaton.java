@@ -285,4 +285,25 @@ public class Hackaton {
                 "nome = '" + nome + "'" +
                 '}';
     }
+
+    /**
+     * Metodo di utilità per copiare questo oggetto in una nuova istanza, identica
+     *
+     * @return Un'istanza di Hackaton identica a questa
+     */
+    public Hackaton copia() {
+        Hackaton copia = new Hackaton();
+        copia.setNome(this.getNome());
+        copia.setOrganizzatore(this.getOrganizzatore());
+        copia.setGiudice(this.getGiudice());
+        copia.setMentori(this.getMentori());
+        copia.setIscritti(this.getIscritti());
+        copia.setDimensioneMassimaTeam(this.getDimensioneMassimaTeam());
+        copia.setScadenzaIscrizioni(this.getScadenzaIscrizioni());
+        copia.setInizio(this.getInizio());
+        copia.setFine(this.getFine());
+        copia.setLuogo(this.getLuogo());
+        copia.setPremio(this.getPremio());
+        return copia;
+    }
 }
