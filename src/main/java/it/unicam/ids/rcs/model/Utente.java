@@ -25,9 +25,12 @@
 
 package it.unicam.ids.rcs.model;
 
+import it.unicam.ids.rcs.util.notificatore.ModalitaNotifica;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Questa classe rappresenta un utente del sistema
@@ -47,6 +50,19 @@ public class Utente {
      * <code>True</code> se l'utente è loggato, <code>false</code> altrimenti
      */
     private boolean accessoEffettuato;
+
+    /**
+     * Contiene tutte le modalità con cui l'utente vuole essere notificato
+     * e.g. Email,SMS
+     */
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(
+            name = "utente_modalita_notifica",
+            joinColumns = @JoinColumn(name = "utente_id")
+    )
+    @Column(name = "modalita")
+    private Set<ModalitaNotifica> modalitaNotifica = new HashSet<>();
 
     public Utente() {
     }
@@ -102,6 +118,14 @@ public class Utente {
 
     public void setAccessoEffettuato(boolean accessoEffettuato) {
         this.accessoEffettuato = accessoEffettuato;
+    }
+
+    public Set<ModalitaNotifica> getModalitaNotifica() {
+        return new HashSet<>(this.modalitaNotifica);
+    }
+
+    private void setModalitaNotifica(Set<ModalitaNotifica> modalitaNotifica) {
+        this.modalitaNotifica = new HashSet<>(modalitaNotifica);
     }
 
     @Override

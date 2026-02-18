@@ -26,14 +26,28 @@
 package it.unicam.ids.rcs.util.notifica;
 
 import it.unicam.ids.rcs.model.notifica.Notifica;
+import it.unicam.ids.rcs.util.notificatore.WrapperNotificatore;
 
 public class GestoreNotifiche {
 
     public GestoreNotifiche() {
     }
 
+    /**
+     * Effettua l'invio della notifica in base alle preferenze configurate
+     * dall'utente in fase di registrazione
+     * @param notificaDaInviare La notifica da inviare
+     */
     public void inviaNotifica(Notifica notificaDaInviare) {
-        //TODO
+        var tipiNotifica = notificaDaInviare.getDestinatario().getModalitaNotifica();
+        WrapperNotificatore notificatore = null;
+        for (var tipoNotifica : tipiNotifica) {
+            notificatore = tipoNotifica.getNotificatore(notificatore);
+        }
+        if (notificatore == null) {
+            return;
+        }
+        notificatore.inviaNotifica(notificaDaInviare);
     }
 
 }
