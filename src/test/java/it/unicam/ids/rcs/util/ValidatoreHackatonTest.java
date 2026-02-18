@@ -240,7 +240,7 @@ public class ValidatoreHackatonTest {
     public void hackatonModificatoScadenzaIscrizioniDopoScadenzaIscrizioniOriginale(){
         int giorniOffset = ThreadLocalRandom.current().nextInt(1, ValidatoreHackaton.PERIODO_MINIMO_SCADENZA_ISCRIZIONI);
         LocalDate nuovaScadenza = this.getHackaton().getScadenzaIscrizioni().plusDays(giorniOffset);
-        Hackaton hackatonModificato = HackatonTest.creaHackatonBase();
+        Hackaton hackatonModificato = this.getHackaton().copia();
         hackatonModificato.setScadenzaIscrizioni(nuovaScadenza);
         ValidatoreHackaton validatoreHackatonModificato = new ValidatoreHackaton(hackatonModificato,hackatonController,utenteController);
 
@@ -250,12 +250,19 @@ public class ValidatoreHackatonTest {
 
     @Test
     public void hackatonModificatoScadenzaIscrizioniAlmenoTraUnaSettimana(){
-        //La nuova scadenza di iscrizioni ha meno di 7 giorni di margine a partire dal momento della modifica
+        // La nuova scadenza di iscrizioni è stata posticipata (OK)
         int giorniOffset = ThreadLocalRandom.current().nextInt(0, ValidatoreHackaton.PERIODO_MINIMO_SCADENZA_ISCRIZIONI);
-        LocalDate nuovaScadenza = this.getHackaton().getScadenzaIscrizioni().plusDays(giorniOffset);
-        Hackaton hackatonModificato = HackatonTest.creaHackatonBase();
-        hackatonModificato.setScadenzaIscrizioni(nuovaScadenza);
+        LocalDate scadenzaPosticipata = this.getHackaton().getScadenzaIscrizioni().plusDays(giorniOffset);
+        Hackaton hackatonModificato = this.getHackaton().copia();
+        hackatonModificato.setScadenzaIscrizioni(scadenzaPosticipata);
         ValidatoreHackaton validatoreHackatonModificato = new ValidatoreHackaton(hackatonModificato,hackatonController,utenteController);
+
+        assertTrue(validatoreHackatonModificato.validaHackatonModificato((this.hackaton)));
+
+        // La nuova scadenza di iscrizioni è stata anticipata e ha meno di 7 giorni di margine a partire dal momento della modifica (ERROR)
+        LocalDate scadenzaAnticipata = LocalDate.now().plusDays(giorniOffset);
+        hackatonModificato.setScadenzaIscrizioni(scadenzaAnticipata);
+        validatoreHackatonModificato = new ValidatoreHackaton(hackatonModificato,hackatonController,utenteController);
 
         assertFalse(validatoreHackatonModificato.validaHackatonModificato((this.hackaton)));
     }
@@ -273,7 +280,7 @@ public class ValidatoreHackatonTest {
     @Test
     public void hackatonModificatoDimensioneMassimaTeamAumentata(){
         int dimensioneMassimaOriginale = this.getHackaton().getDimensioneMassimaTeam();
-        Hackaton hackatonModificato = HackatonTest.creaHackatonBase();
+        Hackaton hackatonModificato = this.getHackaton().copia();
         hackatonModificato.setDimensioneMassimaTeam(dimensioneMassimaOriginale+2);
         ValidatoreHackaton validatoreHackatonModificato = new ValidatoreHackaton(hackatonModificato,hackatonController,utenteController);
 

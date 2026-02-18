@@ -193,12 +193,12 @@ public class ValidatoreHackaton {
      * @return <code>True</code> se la data di scadenza iscrizioni è valida,
      * <code>false</code> altrimenti
      */
-    private boolean validaScadenzaIscrizioniModificata(
-            LocalDate scadenzaIscrizioniOriginale,
-            LocalDate scadenzaIscrizioniModificata
+    private boolean validaScadenzaIscrizioniModificata(LocalDate scadenzaIscrizioniOriginale,
+                                                       LocalDate scadenzaIscrizioniModificata
     ) {
         LocalDate oggi = LocalDate.now();
-        return scadenzaIscrizioniModificata.isAfter(scadenzaIscrizioniOriginale) ||
-                scadenzaIscrizioniModificata.isAfter(oggi.plusDays(7));
+        boolean posticipata = scadenzaIscrizioniModificata.isAfter(scadenzaIscrizioniOriginale);
+        boolean almeno7GiorniDaOggi = scadenzaIscrizioniModificata.isAfter(oggi.plusDays(7));
+        return posticipata || almeno7GiorniDaOggi;
     }
 }
