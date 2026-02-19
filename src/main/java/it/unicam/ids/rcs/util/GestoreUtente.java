@@ -26,6 +26,7 @@
 package it.unicam.ids.rcs.util;
 
 import it.unicam.ids.rcs.model.Utente;
+import it.unicam.ids.rcs.repository.UtenteRepository;
 
 /**
  * Questa classe rappresenta un gestore per l'utente che utilizza il sistema
@@ -39,9 +40,17 @@ public class GestoreUtente {
         Utente utenteGenerico = new Utente();
         utenteGenerico.setEmail("email.email@email.email");
         utenteGenerico.setNome("john");
-        utenteGenerico.setNome("doe");
+        utenteGenerico.setCognome("doe");
         utenteGenerico.setAccessoEffettuato(true);
-        GestoreUtente.utenteLoggato = utenteGenerico;
+
+        UtenteRepository repo = new UtenteRepository();
+        Utente utente = repo.cercaPerEmail(utenteGenerico.getEmail());
+        if (utente == null) {
+            repo.crea(utenteGenerico);
+        } else {
+            utente.setAccessoEffettuato(true);
+        }
+        GestoreUtente.utenteLoggato = utente != null ? utente : utenteGenerico;
     }
 
     /**

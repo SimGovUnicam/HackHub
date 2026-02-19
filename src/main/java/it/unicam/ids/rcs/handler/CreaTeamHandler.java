@@ -21,40 +21,58 @@ package it.unicam.ids.rcs.handler;
 import it.unicam.ids.rcs.controller.TeamController;
 import it.unicam.ids.rcs.controller.UtenteController;
 import it.unicam.ids.rcs.model.Utente;
-import it.unicam.ids.rcs.repository.TeamRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Questa classe rappresenta un gestore del caso d'uso Crea Team.
  * Espone le funzioni necessarie ad avviare, gestire e completare la registrazione
  * di un nuovo team all'interno del sistema.
  */
+@RestController
 public class CreaTeamHandler {
     private TeamController teamController;
+    private UtenteController utenteController;
 
-    public CreaTeamHandler() {
-    }
-
-    private void setTeamController(TeamController teamController) {
+    @Autowired
+    public CreaTeamHandler(TeamController teamController, UtenteController utenteController) {
         this.teamController = teamController;
+        this.utenteController = utenteController;
     }
 
     /**
      * Avvia il processo di creazione del team.
+     *
      * @param nome Il nome da assegnare al team.
      * @return <code>True</code> se il team viene creato con successo, <code>False</code> altrimenti.
      */
-    public boolean creaTeam(String nome){
-        TeamRepository teamRepository = new TeamRepository();
-        this.setTeamController(new TeamController(teamRepository));
-        this.teamController.creaTeam(nome);
-        return false;
+    @PutMapping("/team/crea")
+    public ResponseEntity<Boolean> creaTeam(@RequestParam(name = "nome") String nome) {
+        Utente utenteInSessione = UtenteController.getUtenteInSessione();
+        if (utenteInSessione.getTeam() != null) {
+            return new ResponseEntity<>(Boolean.FALSE, HttpStatus.BAD_REQUEST);
+        }
+        var esito = this.teamController.creaTeam(nome);
+        if (!esito) {
+            return new ResponseEntity<>(Boolean.FALSE, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
     }
 
     /**
      * Questo metodo conferma la creazione del team. Il sistema registra il nuovo team.
      */
-    public void confermaCreazione(){
+    @GetMapping("/team/confermaCreazione")
+    public ResponseEntity<Boolean> confermaCreazione() {
         Utente utenteInSessione = UtenteController.getUtenteInSessione();
         this.teamController.registraTeam(utenteInSessione);
+        utenteInSessione.setTeam(this.teamController.getTeam());
+        this.utenteController.aggiornaUtente(utenteInSessione);
+        return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
     }
 }

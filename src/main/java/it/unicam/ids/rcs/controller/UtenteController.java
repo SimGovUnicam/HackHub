@@ -28,10 +28,12 @@ package it.unicam.ids.rcs.controller;
 import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.repository.UtenteRepository;
 import it.unicam.ids.rcs.util.GestoreUtente;
+import org.springframework.stereotype.Component;
 
 /**
  * Questa classe si occupa della gestione delle operazioni che riguardano gli utenti.
  */
+@Component
 public class UtenteController {
 
     private final UtenteRepository utenteRepository;
@@ -56,10 +58,20 @@ public class UtenteController {
 
     /**
      * Questo metodo esegue la ricerca di un utente attraverso l'email.
+     *
      * @param email L'indirizzo email da cercare.
      * @return l'oggetto <code>Utente</code> oppure null.
      */
     public Utente cercaUtente(String email) {
         return this.utenteRepository.cercaPerEmail(email);
+    }
+
+    /**
+     * Questo metodo aggiorna l'utente
+     *
+     * @param utente L'utente da aggiornare
+     */
+    public void aggiornaUtente(Utente utente) {
+        this.utenteRepository.aggiorna(utente);
     }
 }

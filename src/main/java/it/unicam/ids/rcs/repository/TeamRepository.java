@@ -21,11 +21,13 @@ package it.unicam.ids.rcs.repository;
 import it.unicam.ids.rcs.model.Team;
 import it.unicam.ids.rcs.util.Hibernate;
 import org.hibernate.Session;
+import org.springframework.stereotype.Component;
 
 /**
  * Questa classe rappresenta l'entità che interagisce con il database, eseguendo operazioni CRUD
  * in base alle richieste inviate dal controller.
  */
+@Component
 public class TeamRepository extends GenericRepository<Team> {
 
     public TeamRepository() {

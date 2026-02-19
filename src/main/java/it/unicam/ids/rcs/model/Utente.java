@@ -49,6 +49,7 @@ public class Utente {
     /**
      * <code>True</code> se l'utente è loggato, <code>false</code> altrimenti
      */
+    @Transient
     private boolean accessoEffettuato;
 
     /**
