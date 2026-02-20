@@ -24,10 +24,8 @@ import it.unicam.ids.rcs.model.Utente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Questa classe rappresenta un gestore del caso d'uso Crea Team.
@@ -51,28 +49,28 @@ public class CreaTeamHandler {
      * @param nome Il nome da assegnare al team.
      * @return <code>True</code> se il team viene creato con successo, <code>False</code> altrimenti.
      */
-    @PutMapping("/team/crea")
-    public ResponseEntity<Boolean> creaTeam(@RequestParam(name = "nome") String nome) {
+    @PostMapping("/team/crea")
+    public ResponseEntity<String> creaTeam(@RequestParam(name = "nome") String nome) {
+        if(nome == null || nome.isEmpty())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nome del team non valido");
+
         Utente utenteInSessione = UtenteController.getUtenteInSessione();
         if (utenteInSessione.getTeam() != null) {
-            return new ResponseEntity<>(Boolean.FALSE, HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utente già associato ad un team");
         }
-        var esito = this.teamController.creaTeam(nome);
-        if (!esito) {
-            return new ResponseEntity<>(Boolean.FALSE, HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
+        this.teamController.creaTeam(nome);
+        return new ResponseEntity<>("Creazione team avviata con successo", HttpStatus.OK);
     }
 
     /**
      * Questo metodo conferma la creazione del team. Il sistema registra il nuovo team.
      */
     @GetMapping("/team/confermaCreazione")
-    public ResponseEntity<Boolean> confermaCreazione() {
+    public ResponseEntity<String> confermaCreazione() {
         Utente utenteInSessione = UtenteController.getUtenteInSessione();
         this.teamController.registraTeam(utenteInSessione);
         utenteInSessione.setTeam(this.teamController.getTeam());
         this.utenteController.aggiornaUtente(utenteInSessione);
-        return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
+        return new ResponseEntity<>("Team creato con successo", HttpStatus.OK);
     }
 }

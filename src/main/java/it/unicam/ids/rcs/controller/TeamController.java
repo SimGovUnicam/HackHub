@@ -21,8 +21,11 @@ package it.unicam.ids.rcs.controller;
 import it.unicam.ids.rcs.model.Team;
 import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.repository.TeamRepository;
+import org.springframework.beans.MethodInvocationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Questa classe si occupa della gestione delle operazioni che riguardano i Team
@@ -49,8 +52,12 @@ public class TeamController {
      * @return <code>True</code> se il nuovo team viene creato con successo, <code>False</code> altrimenti.
      */
     public boolean creaTeam(String nome) {
-        if (this.teamRepository.cercaPerNome(nome) != null)
-            return false;
+        System.out.println("QUI");
+        Team team = this.teamRepository.cercaPerNome(nome);
+        if (team != null){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Team già esistente con quel nome");
+        }
+
         Team nuovoTeam = new Team(nome);
         this.team = nuovoTeam;
         return true;

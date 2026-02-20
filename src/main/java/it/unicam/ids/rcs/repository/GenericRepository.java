@@ -28,6 +28,8 @@ package it.unicam.ids.rcs.repository;
 import it.unicam.ids.rcs.util.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Questa classe rappresenta una repository generica che implementa le operazioni
@@ -42,22 +44,26 @@ public class GenericRepository<E> {
      * @param entita L'entità da registrare
      */
     public void crea(E entita) {
-        Session session = Hibernate.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.persist(entita);
-        transaction.commit();
-        session.close();
+        try (Session session = Hibernate.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            session.persist(entita);
+            transaction.commit();
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Errore creazione entità: " + ex.getMessage(), ex);
+        }
     }
 
     /**
      * Aggiorna l'entità nel database
      */
     public E aggiorna(E entita) {
-        Session session = Hibernate.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        E entitaAggiornata = session.merge(entita);
-        transaction.commit();
-        session.close();
-        return entitaAggiornata;
+        try (Session session = Hibernate.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            E entitaAggiornata = session.merge(entita);
+            transaction.commit();
+            return entitaAggiornata;
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Errore aggiornamento entità: " + ex.getMessage(), ex);
+        }
     }
 }
