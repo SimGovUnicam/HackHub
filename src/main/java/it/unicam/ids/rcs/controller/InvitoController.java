@@ -26,6 +26,8 @@ import it.unicam.ids.rcs.repository.InvitoRepository;
 import it.unicam.ids.rcs.util.notifica.GestoreNotifiche;
 import it.unicam.ids.rcs.util.notifica.NotificaFactory;
 import it.unicam.ids.rcs.util.notifica.NotificaInvitoFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Questa classe si occupa della gestione delle operazioni che riguardano gli inviti
@@ -65,9 +67,11 @@ public class InvitoController {
      */
     public Invito creaInvitoAdesioneTeam(String emailUtenteDaInvitare) {
         Utente utenteDaInvitare = this.getUtenteController().cercaUtente(emailUtenteDaInvitare);
-        if (utenteDaInvitare == null || utenteDaInvitare.getTeam() != null) {
-            return null;
-        }
+        if (utenteDaInvitare == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Utente non trovato");
+
+        if(utenteDaInvitare.getTeam() != null)
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"L'utente fa già parte di un team");
 
         Utente mittenteInvito = UtenteController.getUtenteInSessione();
         this.setInvito(new InvitoAdesioneTeam(mittenteInvito, utenteDaInvitare));

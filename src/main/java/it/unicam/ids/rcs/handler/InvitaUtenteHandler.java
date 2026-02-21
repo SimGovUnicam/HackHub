@@ -23,34 +23,48 @@ import it.unicam.ids.rcs.controller.UtenteController;
 import it.unicam.ids.rcs.model.invito.Invito;
 import it.unicam.ids.rcs.repository.InvitoRepository;
 import it.unicam.ids.rcs.repository.UtenteRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+/**
+ *
+ */
+@RestController
 public class InvitaUtenteHandler {
 
     private InvitoController invitoController;
 
     public InvitaUtenteHandler() {}
 
-    /**
-     *
-     * @param emailUtenteDaInvitare
-     * @return
-     */
-    public Invito invitaUtente(String emailUtenteDaInvitare){
-        UtenteRepository utenteRepository = new UtenteRepository();
-        UtenteController utenteController = new UtenteController(utenteRepository);
-        InvitoRepository invitoRepository = new InvitoRepository();
-        this.setInvitoController(new InvitoController(invitoRepository,utenteController));
-        return this.invitoController.creaInvitoAdesioneTeam(emailUtenteDaInvitare);
-    }
-
     protected void setInvitoController(InvitoController invitoController) {
         this.invitoController = invitoController;
     }
 
     /**
+     * Avvia il processo di invito di un utente ad unirsi ad un team.
+     * @param emailUtenteDaInvitare L'email dell'utente da invitare.
+     * @return l'oggetto <code>Invito</code> che è stato creato
+     */
+    @PostMapping("/team/invita")
+    public ResponseEntity<Invito> invitaUtente(@RequestParam(name = "email") String emailUtenteDaInvitare){
+        UtenteRepository utenteRepository = new UtenteRepository();
+        UtenteController utenteController = new UtenteController(utenteRepository);
+        InvitoRepository invitoRepository = new InvitoRepository();
+        this.setInvitoController(new InvitoController(invitoRepository,utenteController));
+        Invito invito = this.invitoController.creaInvitoAdesioneTeam(emailUtenteDaInvitare);
+        return new ResponseEntity<>(invito, HttpStatus.OK);
+    }
+
+    /**
      *
      */
-    public void confermaInvito(){
+    @GetMapping("/team/confermaInvito")
+    public ResponseEntity<String> confermaInvito(){
         this.invitoController.confermaInvito();
+        return new ResponseEntity<>("Invito creato con successo",HttpStatus.OK);
     }
 }

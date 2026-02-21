@@ -27,14 +27,21 @@ package it.unicam.ids.rcs.model.invito;
 
 import it.unicam.ids.rcs.model.Utente;
 import it.unicam.ids.rcs.model.notifica.Notificabile;
+import jakarta.persistence.*;
 
 /**
  * Questa classe rappresenta un invito, ovvero una richiesta fatta da un utente
  * a un altro che può essere accettata o declinata (ma non entrambe).
  * Per farlo, questa classe utilizza il design pattern Template Method
  */
+@MappedSuperclass
 public abstract class Invito implements Notificabile {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @OneToOne
     private Utente mittente;
+    @OneToOne
     private Utente invitato;
     private StatoInvito stato = StatoInvito.IN_ATTESA;
 
@@ -42,6 +49,8 @@ public abstract class Invito implements Notificabile {
         this.mittente = mittente;
         this.invitato = invitato;
     }
+
+    protected Invito() {}
 
     public Utente getMittente() {
         return this.mittente;

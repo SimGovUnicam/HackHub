@@ -27,14 +27,22 @@ package it.unicam.ids.rcs.model.invito;
 
 import it.unicam.ids.rcs.model.Team;
 import it.unicam.ids.rcs.model.Utente;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 
 /**
  * Questa classe rappresenta un invito di adesione a un team. Il mittente ha
  * invitato l'invitato a far parte del suo team
  */
+@Entity
 public class InvitoAdesioneTeam extends Invito {
     public InvitoAdesioneTeam(Utente mittente, Utente invitato) {
         super(mittente, invitato);
+    }
+
+    public InvitoAdesioneTeam() {
+        super();
     }
 
     @Override
