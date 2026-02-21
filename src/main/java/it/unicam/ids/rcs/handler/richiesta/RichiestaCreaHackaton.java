@@ -43,6 +43,7 @@ import java.util.function.Function;
 
 @JacksonComponent
 public class RichiestaCreaHackaton {
+    private String nome;
     private int dimensioneMassimaTeam;
     private String regolamento;
     private LocalDate scadenzaIscrizioni;
@@ -54,7 +55,8 @@ public class RichiestaCreaHackaton {
     public RichiestaCreaHackaton() {
     }
 
-    public RichiestaCreaHackaton(int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio, LocalDateTime fine, String luogo, Double premio) {
+    public RichiestaCreaHackaton(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio, LocalDateTime fine, String luogo, Double premio) {
+        this.nome = nome;
         this.dimensioneMassimaTeam = dimensioneMassimaTeam;
         this.regolamento = regolamento;
         this.scadenzaIscrizioni = scadenzaIscrizioni;
@@ -62,6 +64,10 @@ public class RichiestaCreaHackaton {
         this.fine = fine;
         this.luogo = luogo;
         this.premio = premio;
+    }
+
+    public String getNome() {
+        return this.nome;
     }
 
     public int getDimensioneMassimaTeam() {
@@ -94,7 +100,16 @@ public class RichiestaCreaHackaton {
 
     @Override
     public String toString() {
-        return "RichiestaCreaHackaton{" + "dimensioneMassimaTeam=" + dimensioneMassimaTeam + ", regolamento='" + regolamento + '\'' + ", scadenzaIscrizioni=" + scadenzaIscrizioni + ", inizio=" + inizio + ", fine=" + fine + ", luogo='" + luogo + '\'' + ", premio=" + premio + '}';
+        return "RichiestaCreaHackaton {" +
+                "nome='" + nome + '\'' +
+                ", dimensioneMassimaTeam=" + dimensioneMassimaTeam +
+                ", regolamento='" + regolamento + '\'' +
+                ", scadenzaIscrizioni=" + scadenzaIscrizioni +
+                ", inizio=" + inizio +
+                ", fine=" + fine +
+                ", luogo='" + luogo + '\'' +
+                ", premio=" + premio +
+                '}';
     }
 
     public static class Deserializer extends ValueDeserializer<RichiestaCreaHackaton> {
@@ -124,6 +139,7 @@ public class RichiestaCreaHackaton {
         @Override
         public RichiestaCreaHackaton deserialize(JsonParser parser, DeserializationContext context) throws JacksonException {
             JsonNode tree = parser.readValueAsTree();
+            String nome = controllaELeggi(tree, "nome", JsonNode::asString);
             int dimensioneMassimaTeam = controllaELeggi(tree, "dimensioneMassimaTeam", JsonNode::asInt);
             String regolamento = controllaELeggi(tree, "regolamento", JsonNode::asString);
             String scadenzaIscrizioniString = controllaELeggi(tree, "scadenzaIscrizioni", JsonNode::asString);
@@ -136,7 +152,7 @@ public class RichiestaCreaHackaton {
                 LocalDate scadenzaIscrizioni = LocalDate.parse(scadenzaIscrizioniString, DateTimeFormatter.ISO_DATE);
                 LocalDateTime inizio = LocalDateTime.parse(inizioString, DateTimeFormatter.ISO_DATE_TIME);
                 LocalDateTime fine = LocalDateTime.parse(fineString, DateTimeFormatter.ISO_DATE_TIME);
-                return new RichiestaCreaHackaton(dimensioneMassimaTeam, regolamento, scadenzaIscrizioni, inizio, fine, luogo, premio);
+                return new RichiestaCreaHackaton(nome, dimensioneMassimaTeam, regolamento, scadenzaIscrizioni, inizio, fine, luogo, premio);
             } catch (DateTimeParseException exception) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Formato data errato: " + exception.getMessage());
             }

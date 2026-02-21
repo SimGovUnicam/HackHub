@@ -50,15 +50,18 @@ public class Hackaton {
     private LocalDateTime fine;
     private String luogo;
     private double premio;
-    @OneToOne(targetEntity = Utente.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Utente.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "organizzatore_id")
     private Utente organizzatore;
-    @OneToOne(targetEntity = Utente.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Utente.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "giudice_id")
     private Utente giudice;
     @OneToMany(targetEntity = Utente.class, fetch = FetchType.LAZY)
     private List<Utente> mentori;
     @OneToMany(targetEntity = Team.class, fetch = FetchType.LAZY)
     private List<Team> iscritti;
-    @OneToOne(targetEntity = Team.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Team.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "vincitore_id")
     private Team vincitore;
     /**
      * <code>True</code> se l'hackaton è annullato, <code>false</code> altrimenti

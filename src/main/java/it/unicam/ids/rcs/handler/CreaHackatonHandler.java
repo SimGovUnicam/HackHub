@@ -28,6 +28,13 @@ package it.unicam.ids.rcs.handler;
 import it.unicam.ids.rcs.controller.HackatonController;
 import it.unicam.ids.rcs.handler.richiesta.RichiestaCreaHackaton;
 import it.unicam.ids.rcs.model.Hackaton;
+import it.unicam.ids.rcs.model.Utente;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -36,11 +43,23 @@ import java.util.List;
  * Espone le funzioni necessarie ad avviare, gestire e completare la registrazione
  * di un nuovo hackaton all'interno del sistema.
  */
+@RestController
 public class CreaHackatonHandler {
 
     private HackatonController hackatonController;
+    private MessageSource messageSource;
 
     public CreaHackatonHandler() {
+    }
+
+    @Autowired
+    public CreaHackatonHandler(HackatonController hackatonController, MessageSource messageSource) {
+        this.hackatonController = hackatonController;
+        this.messageSource = messageSource;
+    }
+
+    public HackatonController getHackatonController() {
+        return this.hackatonController;
     }
 
     private void setHackatonController(HackatonController hackatonController) {
@@ -53,9 +72,10 @@ public class CreaHackatonHandler {
      * @param richiesta La richiesta di creazione dell'Hackaton
      * @return <code>True</code> se l'operazione termina con successo, <code>false</code> altrimenti
      */
-    public boolean creaHackaton(RichiestaCreaHackaton richiesta) {
-        this.setHackatonController(new HackatonController());
-        return this.hackatonController.creaHackaton(
+    @PostMapping("/hackaton/crea")
+    public ResponseEntity<String> creaHackaton(@RequestBody RichiestaCreaHackaton richiesta) {
+        this.hackatonController.creaHackaton(
+                richiesta.getNome(),
                 richiesta.getDimensioneMassimaTeam(),
                 richiesta.getRegolamento(),
                 richiesta.getScadenzaIscrizioni(),
@@ -64,6 +84,7 @@ public class CreaHackatonHandler {
                 richiesta.getLuogo(),
                 richiesta.getPremio()
         );
+        return new ResponseEntity<>("Creazione hackaton avviata con successo", HttpStatus.OK);
     }
 
     /**
@@ -73,8 +94,21 @@ public class CreaHackatonHandler {
      * @return <code>True</code> in caso di successo, <code>false</code> altrimenti
      * (e.g. Non esistono utenti con l'e-mail fornita)
      */
-    public boolean assegnaGiudice(String email) {
-        return this.hackatonController.assegnaGiudice(email);
+    @GetMapping("/hackaton/crea/giudice")
+    public ResponseEntity<String> assegnaGiudice(@RequestParam String email) {
+        this.checkCreazioneHackatonAvviata();
+        try {
+            this.hackatonController.assegnaGiudice(email);
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Errore nell'assegnazione del giudice: " + exception.getMessage());
+        }
+        return new ResponseEntity<>("Giudice assegnato con successo", HttpStatus.OK);
+    }
+
+    private void checkCreazioneHackatonAvviata() {
+        if (this.getHackatonController().getHackaton() == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Creazione hackaton non avviata");
+        }
     }
 
     /**
@@ -84,8 +118,25 @@ public class CreaHackatonHandler {
      * @return <code>True</code> in caso di successo, <code>false</code> altrimenti
      * (e.g. Non esistono utenti con l'e-mail fornita)
      */
-    public boolean aggiungiMentori(List<String> emails) {
-        return emails != null && !emails.isEmpty() && this.hackatonController.aggiungiMentori(emails);
+    @PostMapping("/hackaton/crea/mentori")
+    public ResponseEntity<String> aggiungiMentori(@RequestBody List<String> emails) {
+        this.checkCreazioneHackatonAvviata();
+        try {
+            this.hackatonController.aggiungiMentori(emails);
+        } catch (IllegalArgumentException e) {
+            String message = "Errore durante l'aggiunta dei mentori: " + e.getMessage();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
+        }
+        return new ResponseEntity<>(this.getRispostaMentoriAssegnati(), HttpStatus.OK);
+    }
+
+    private String getRispostaMentoriAssegnati() {
+        StringBuilder message = new StringBuilder("Mentori assegnati con successo: \n");
+        var mentori = this.getHackatonController().getHackaton().getMentori();
+        for (Utente mentore : mentori) {
+            message.append(mentore).append("\n");
+        }
+        return message.toString();
     }
 
     /**
@@ -93,7 +144,15 @@ public class CreaHackatonHandler {
      *
      * @return <code>Hackaton</code> in caso di successo, <code>null</code> altrimenti
      */
-    public Hackaton confermaCreazione() {
-        return this.hackatonController.registraHackaton();
+    @GetMapping("/hackaton/crea/confermaCreazione")
+    public ResponseEntity<Hackaton> confermaCreazione() {
+        Hackaton hackaton;
+        try {
+            hackaton = this.getHackatonController().registraHackaton();
+        } catch (Exception exception) {
+            String message = "Errore durante la registrazione dell'hackaton: " + exception.getMessage();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
+        }
+        return new ResponseEntity<>(hackaton, HttpStatus.CREATED);
     }
 }
