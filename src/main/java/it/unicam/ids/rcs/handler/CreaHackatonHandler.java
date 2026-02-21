@@ -26,10 +26,9 @@
 package it.unicam.ids.rcs.handler;
 
 import it.unicam.ids.rcs.controller.HackatonController;
+import it.unicam.ids.rcs.handler.richiesta.RichiestaCreaHackaton;
 import it.unicam.ids.rcs.model.Hackaton;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -51,20 +50,20 @@ public class CreaHackatonHandler {
     /**
      * Avvia il processo di creazione dell'hackaton
      *
-     * @param dimensioneMassimaTeam La dimensione massima di ciascun team
-     * @param regolamento           Il regolamento completo dell'hackaton
-     * @param scadenzaIscrizioni    La data di scadenza delle iscrizioni
-     * @param inizio                Data di inizio dell'hackaton
-     * @param fine                  Data di fine dell'hackaton
-     * @param luogo                 Il luogo in cui si svolge l'hackaton
-     * @param premio                Il premio in denaro per il vincitore dell'hackaton
+     * @param richiesta La richiesta di creazione dell'Hackaton
      * @return <code>True</code> se l'operazione termina con successo, <code>false</code> altrimenti
      */
-    public boolean creaHackaton(int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni,
-                                LocalDateTime inizio, LocalDateTime fine, String luogo, Double premio) {
+    public boolean creaHackaton(RichiestaCreaHackaton richiesta) {
         this.setHackatonController(new HackatonController());
-        return this.hackatonController.creaHackaton(dimensioneMassimaTeam, regolamento, scadenzaIscrizioni,
-                inizio, fine, luogo, premio);
+        return this.hackatonController.creaHackaton(
+                richiesta.getDimensioneMassimaTeam(),
+                richiesta.getRegolamento(),
+                richiesta.getScadenzaIscrizioni(),
+                richiesta.getInizio(),
+                richiesta.getFine(),
+                richiesta.getLuogo(),
+                richiesta.getPremio()
+        );
     }
 
     /**
