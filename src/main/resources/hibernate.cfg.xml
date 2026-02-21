@@ -20,6 +20,8 @@
         <mapping class="it.unicam.ids.rcs.model.Utente"/>
         <mapping class="it.unicam.ids.rcs.model.Hackaton"/>
         <mapping class="it.unicam.ids.rcs.model.Team"/>
+        <mapping class="it.unicam.ids.rcs.model.invito.Invito"/>
+        <mapping class="it.unicam.ids.rcs.model.invito.InvitoAdesioneTeam"/>
 
     </session-factory>
 </hibernate-configuration>
