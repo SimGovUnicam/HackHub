@@ -27,6 +27,11 @@ package it.unicam.ids.rcs.model;
 
 import it.unicam.ids.rcs.util.notificatore.ModalitaNotifica;
 import jakarta.persistence.*;
+import org.springframework.boot.jackson.JacksonComponent;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -36,6 +41,7 @@ import java.util.Set;
  * Questa classe rappresenta un utente del sistema
  */
 @Entity
+@JacksonComponent
 public class Utente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -130,17 +136,14 @@ public class Utente {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (!(o instanceof Utente utente)) return false;
-
-        return Objects.equals(id, utente.id) && getEmail().equals(utente.getEmail());
+        return Objects.equals(email, utente.email);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(id);
-        result = 31 * result + getEmail().hashCode();
-        return result;
+        return Objects.hashCode(email);
     }
 
     @Override
@@ -148,5 +151,19 @@ public class Utente {
         return "Utente {" +
                 "email = '" + email + "'" +
                 '}';
+    }
+
+    public static class Serializer extends ValueSerializer<Utente> {
+
+        @Override
+        public void serialize(Utente utente, JsonGenerator gen, SerializationContext ctxt) throws JacksonException {
+            Team team = utente.getTeam();
+            gen.writeStartObject();
+            gen.writeStringProperty("nome", utente.getNome());
+            gen.writeStringProperty("cognome", utente.getCognome());
+            gen.writeStringProperty("email", utente.getEmail());
+            gen.writeStringProperty("Team", team !=  null ? team.getNome() : null);
+            gen.writeEndObject();
+        }
     }
 }

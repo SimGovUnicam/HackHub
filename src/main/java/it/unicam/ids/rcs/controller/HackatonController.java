@@ -32,6 +32,7 @@ import it.unicam.ids.rcs.model.notifica.Notifica;
 import it.unicam.ids.rcs.repository.HackatonRepository;
 import it.unicam.ids.rcs.util.ValidatoreHackaton;
 import it.unicam.ids.rcs.util.notifica.*;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,6 +42,7 @@ import java.util.List;
 /**
  * Questa classe si occupa della gestione delle operazioni che riguardano gli hackaton
  */
+@Service
 public class HackatonController {
     private Hackaton hackaton;
     private HackatonRepository hackatonRepository;

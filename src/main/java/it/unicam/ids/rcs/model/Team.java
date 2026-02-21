@@ -19,14 +19,21 @@
 package it.unicam.ids.rcs.model;
 
 import jakarta.persistence.*;
+import org.springframework.boot.jackson.JacksonComponent;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Questa classe rappresenta un team composto da almeno due utenti
  */
 @Entity
+@JacksonComponent
 public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,14 +87,28 @@ public class Team {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (!(o instanceof Team team)) return false;
-
-        return getNome().equals(team.getNome());
+        return Objects.equals(id, team.id) && Objects.equals(nome, team.nome);
     }
 
     @Override
     public int hashCode() {
-        return getNome().hashCode();
+        return Objects.hash(id, nome);
+    }
+
+    public static class Serializer extends ValueSerializer<Team> {
+
+        @Override
+        public void serialize(Team team, JsonGenerator gen, SerializationContext ctxt) throws JacksonException {
+            gen.writeStartObject();
+            gen.writeStringProperty("nome", team.getNome());
+            gen.writeStartArray("membri");
+            for (Utente utente : team.getMembri()) {
+                gen.writeObjectRef(utente);
+            }
+            gen.writeEndArray();
+            gen.writeEndObject();
+        }
     }
 }
