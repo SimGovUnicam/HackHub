@@ -31,6 +31,8 @@ import it.unicam.ids.rcs.model.Hackaton;
 import it.unicam.ids.rcs.model.Utente;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Questa classe ha la responsabilità di effettuare la validazione dei dati di
@@ -42,11 +44,13 @@ public class ValidatoreHackaton {
     private Hackaton hackatonDaValidare;
     private HackatonController controllerHackaton;
     private UtenteController controllerUtente;
+    private List<String> erroriDiValidazione;
 
     public ValidatoreHackaton(Hackaton hackatonDaValidare, HackatonController controllerHackaton, UtenteController controllerUtente) {
         this.hackatonDaValidare = hackatonDaValidare;
         this.controllerHackaton = controllerHackaton;
         this.controllerUtente = controllerUtente;
+        this.resetErroriDiValidazione();
     }
 
     public Hackaton getHackatonDaValidare() {
@@ -73,6 +77,26 @@ public class ValidatoreHackaton {
         this.controllerUtente = controllerUtente;
     }
 
+    public List<String> getErroriDiValidazione() {
+        return this.erroriDiValidazione;
+    }
+
+    public void resetErroriDiValidazione() {
+        this.erroriDiValidazione = new ArrayList<>();
+    }
+
+    private void aggiungiErroreDiValidazione(String errore) {
+        this.getErroriDiValidazione().add(errore);
+    }
+
+    public String getErroriFormattati() {
+        StringBuilder sb = new StringBuilder();
+        for (String errore : this.getErroriDiValidazione()) {
+            sb.append(errore).append("\n");
+        }
+        return sb.toString();
+    }
+
     /**
      * Determina se l'hackaton risulta valido per poter essere aggiunto al sistema
      *
@@ -80,10 +104,16 @@ public class ValidatoreHackaton {
      * <code>false</code> altrimenti
      */
     public boolean validaNuovoHackaton() {
+        this.resetErroriDiValidazione();
         Hackaton hackaton = this.getHackatonDaValidare();
         LocalDate oggi = LocalDate.now();
+        boolean scadenzaIscrizioniValida = hackaton.getScadenzaIscrizioni().isAfter(oggi.plusDays(PERIODO_MINIMO_SCADENZA_ISCRIZIONI));
+        if (!scadenzaIscrizioniValida) {
+            String errore = "La data di scadenza iscrizioni deve essere tra almeno " + PERIODO_MINIMO_SCADENZA_ISCRIZIONI + " giorni";
+            this.aggiungiErroreDiValidazione(errore);
+        }
         return this.validaInfoOrganizzativeDiBase() &&
-                hackaton.getScadenzaIscrizioni().isAfter(oggi.plusDays(PERIODO_MINIMO_SCADENZA_ISCRIZIONI)) &&
+                scadenzaIscrizioniValida &&
                 this.validaNomeHackaton() &&
                 this.validaUtentiHackaton();
     }
@@ -97,10 +127,29 @@ public class ValidatoreHackaton {
     private boolean validaInfoOrganizzativeDiBase() {
         Hackaton hackaton = this.getHackatonDaValidare();
         LocalDate scadenzaIscrizioni = hackaton.getScadenzaIscrizioni();
-        return hackaton.getDimensioneMassimaTeam() > 0 &&
-                hackaton.getInizio().isAfter(scadenzaIscrizioni.atStartOfDay()) &&
-                hackaton.getInizio().isBefore(hackaton.getFine()) &&
-                hackaton.getPremio() >= 0.0;
+        boolean dimensioneMassimaValida = hackaton.getDimensioneMassimaTeam() > 0;
+        if (!dimensioneMassimaValida) {
+            this.aggiungiErroreDiValidazione("La dimensione massima dei team deve essere positiva");
+        }
+
+        boolean scadenzaIscrizioniPrimaDiInizio = scadenzaIscrizioni.plusDays(1).atStartOfDay().isBefore(hackaton.getInizio());
+        if (!scadenzaIscrizioniPrimaDiInizio) {
+            this.aggiungiErroreDiValidazione("La data di scadenza iscrizioni deve essere precedente alla data di inizio");
+        }
+
+        boolean dataInizioPrimaDiFine = hackaton.getInizio().isBefore(hackaton.getFine());
+        if (!dataInizioPrimaDiFine) {
+            this.aggiungiErroreDiValidazione("La data di inizio deve essere precedente alla data di fine");
+        }
+
+        boolean premioNonNegativo = hackaton.getPremio() >= 0.0;
+        if (!premioNonNegativo) {
+            this.aggiungiErroreDiValidazione("Il premio non può essere un numero negativo");
+        }
+        return dimensioneMassimaValida &&
+                scadenzaIscrizioniPrimaDiInizio &&
+                dataInizioPrimaDiFine &&
+                premioNonNegativo;
     }
 
     /**
@@ -112,7 +161,12 @@ public class ValidatoreHackaton {
      */
     private boolean validaNomeHackaton() {
         String nomeHackaton = this.getHackatonDaValidare().getNome();
-        return this.getControllerHackaton().cercaHackaton(nomeHackaton) == null;
+        boolean nomeHackatonValido = nomeHackaton != null && !nomeHackaton.isBlank() &&
+                this.getControllerHackaton().cercaHackaton(nomeHackaton) == null;
+        if (!nomeHackatonValido) {
+            this.aggiungiErroreDiValidazione("Il nome dell'hackaton è già in uso");
+        }
+        return nomeHackatonValido;
     }
 
     /**
@@ -126,6 +180,7 @@ public class ValidatoreHackaton {
      * <code>false</code> altrimenti
      */
     public boolean validaHackatonModificato(Hackaton hackatonOriginale) {
+        this.resetErroriDiValidazione();
         Hackaton hackatonModificato = this.getHackatonDaValidare();
         boolean scadenzaIscrizioniValida = this.validaScadenzaIscrizioniModificata(
                 hackatonOriginale.getScadenzaIscrizioni(),
@@ -155,14 +210,15 @@ public class ValidatoreHackaton {
     private boolean validaUtentiHackaton() {
         Hackaton hackaton = this.getHackatonDaValidare();
         UtenteController utenteController = this.getControllerUtente();
+        boolean utentiValidi = true;
         for (Utente mentore : hackaton.getMentori()) {
             if (utenteController.cercaUtente(mentore.getEmail()) == null ||
                     hackaton.isOrganizzatore(mentore) ||
                     hackaton.isGiudice(mentore) ||
                     hackaton.isMembroDelTeamIscritto(mentore)
             ) {
-                System.out.println("Errore durante la validazione del mentore: " + mentore); // TODO rimuovere dopo porting su SpringBoot
-                return false;
+                this.aggiungiErroreDiValidazione("Errore durante la validazione del mentore: " + mentore);
+                utentiValidi = false;
             }
         }
 
@@ -172,11 +228,11 @@ public class ValidatoreHackaton {
                 hackaton.isMentore(giudice) ||
                 hackaton.isMembroDelTeamIscritto(giudice)
         ) {
-            System.out.println("Errore durante la validazione del giudice: " + giudice); // TODO rimuovere dopo porting su SpringBoot
-            return false;
+            this.aggiungiErroreDiValidazione("Errore durante la validazione del giudice: " + giudice);
+            utentiValidi = false;
         }
 
-        return true;
+        return utentiValidi;
     }
 
     /**

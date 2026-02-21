@@ -93,83 +93,71 @@ public class HackatonController {
      * @param fine                  Data di fine dell'hackaton
      * @param luogo                 Il luogo in cui si svolge l'hackaton
      * @param premio                Il premio in denaro per il vincitore dell'hackaton
-     * @return <code>True</code> se l'operazione termina con successo, <code>false</code> altrimenti
      */
-    public boolean creaHackaton(int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio, LocalDateTime fine, String luogo, Double premio) {
+    public void creaHackaton(String nome, int dimensioneMassimaTeam, String regolamento, LocalDate scadenzaIscrizioni, LocalDateTime inizio, LocalDateTime fine, String luogo, Double premio) {
         Hackaton hackaton = new Hackaton();
+        hackaton.setNome(nome);
         hackaton.setDimensioneMassimaTeam(dimensioneMassimaTeam);
         hackaton.setRegolamento(regolamento);
         hackaton.setScadenzaIscrizioni(scadenzaIscrizioni);
         hackaton.setInizio(inizio);
         hackaton.setFine(fine);
         hackaton.setLuogo(luogo);
-        hackaton.setPremio(premio);
-
+        hackaton.setPremio((double) Math.round(premio * 100) / 100);
         hackaton.setOrganizzatore(UtenteController.getUtenteInSessione());
 
         this.setHackaton(hackaton);
-        return true;
     }
 
     /**
      * Assegna l'utente indicato attraverso l'e-mail come giudice dell'hackaton
      *
      * @param email L'e-mail dell'utente da designare come giudice
-     * @return <code>True</code> se l'operazione termina con successo, <code>false</code> altrimenti
-     * (e.g. Non esiste un utente con l'e-mail fornita)
      */
-    public boolean assegnaGiudice(String email) {
+    public void assegnaGiudice(String email) {
         if (email == null || email.isEmpty()) {
-            System.out.println("AssegnaGiudice - Nessuna e-mail fornita"); // TODO rimuovere dopo porting su SpringBoot
-            return false;
+            throw new IllegalArgumentException("Nessuna e-mail fornita");
         }
 
         Utente giudice = this.getUtenteController().cercaUtente(email);
         if (giudice == null) {
-            System.out.println("AssegnaGiudice - Utente non trovato con email: " + email); // TODO rimuovere dopo porting su SpringBoot
-            return false;
+            throw new IllegalArgumentException("Utente non trovato con email: " + email);
         }
 
         if (this.getHackaton().isMembroDelloStaff(giudice)) {
             // Il giudice è già designato come membro dello staff (i.e. Organizzatore, mentore)
-            System.out.println("AssegnaGiudice - L'utente è già un membro dello staff: " + email); // TODO rimuovere dopo porting su SpringBoot
-            return false;
+            throw new IllegalArgumentException("L'utente è già un membro dello staff: " + email);
         }
 
         this.getHackaton().setGiudice(giudice);
-        return true;
     }
 
     /**
      * Assegna gli utenti indicato attraverso le e-mail come mentori dell'hackaton
      *
      * @param emails Le e-mail degli utenti da designare come mentori
-     * @return <code>True</code> se l'operazione termina con successo, <code>false</code> altrimenti
-     * (e.g. Non esiste un utente con l'e-mail fornita)
      */
-    public boolean aggiungiMentori(List<String> emails) {
+    public void aggiungiMentori(List<String> emails) {
         if (emails.isEmpty()) {
-            System.out.println("AssegnaMentore - Nessuna e-mail fornita"); // TODO rimuovere dopo porting su SpringBoot
-            return false;
+            throw new IllegalArgumentException("Nessuna e-mail fornita");
         }
 
         for (String email : emails) {
+            if (email.isBlank()) {
+                throw new IllegalArgumentException("E-mail non valorizzata");
+            }
             Utente mentore = this.getUtenteController().cercaUtente(email);
             if (mentore == null) {
-                System.out.println("AssegnaMentore - Utente non trovato con email: " + email); // TODO rimuovere dopo porting su SpringBoot
-                return false;
+                throw new IllegalArgumentException("Utente non trovato con email: " + email);
             }
 
-            if (this.getHackaton().isMembroDelloStaff(mentore)) {
-                // L'utente è già membro dello staff (i.e. Organizzatore, giudice, mentore già aggiunto)
-                System.out.println("AssegnaMentore - L'utente è già un membro dello staff: " + email); // TODO rimuovere dopo porting su SpringBoot
-                return false;
+            if (this.getHackaton().isOrganizzatore(mentore) || this.getHackaton().isGiudice(mentore)) {
+                // L'utente è già membro dello staff (i.e. Organizzatore, giudice)
+                throw new IllegalArgumentException("L'utente è già un membro dello staff: " + email);
             }
 
             this.getHackaton().aggiungiMentore(mentore);
         }
-
-        return true;
     }
 
     /**
