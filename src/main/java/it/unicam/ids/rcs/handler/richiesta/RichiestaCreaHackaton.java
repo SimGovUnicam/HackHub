@@ -37,6 +37,7 @@ import tools.jackson.databind.ValueDeserializer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -110,7 +111,10 @@ public class RichiestaCreaHackaton {
          */
         private static <R> R controllaELeggi(JsonNode tree, String proprieta, Function<JsonNode, R> lettore) {
             Optional<JsonNode> NodeOptional = tree.optional(proprieta);
-            if (NodeOptional.isEmpty() || !NodeOptional.get().isValueNode()) {
+            if (NodeOptional.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Campo " + proprieta + " non presente");
+            }
+            if (NodeOptional.get().isNull() || (NodeOptional.get().isString() && NodeOptional.get().asString().isBlank())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Campo " + proprieta + " non valorizzato");
             }
             JsonNode nodo = NodeOptional.get();
@@ -121,21 +125,21 @@ public class RichiestaCreaHackaton {
         public RichiestaCreaHackaton deserialize(JsonParser parser, DeserializationContext context) throws JacksonException {
             JsonNode tree = parser.readValueAsTree();
             int dimensioneMassimaTeam = controllaELeggi(tree, "dimensioneMassimaTeam", JsonNode::asInt);
-            String regolamento = controllaELeggi(tree, "regolamento", JsonNode::stringValue);
-
-            String scadenzaIscrizioniString = controllaELeggi(tree, "scadenzaIscrizioni", JsonNode::stringValue);
-            LocalDate scadenzaIscrizioni = LocalDate.parse(scadenzaIscrizioniString, DateTimeFormatter.ISO_DATE);
-
-            String inizioString = controllaELeggi(tree, "inizio", JsonNode::stringValue);
-            LocalDateTime inizio = LocalDateTime.parse(inizioString, DateTimeFormatter.ISO_DATE_TIME);
-
-            String fineString = controllaELeggi(tree, "fine", JsonNode::stringValue);
-            LocalDateTime fine = LocalDateTime.parse(fineString, DateTimeFormatter.ISO_DATE_TIME);
-
-            String luogo = controllaELeggi(tree, "luogo", JsonNode::stringValue);
+            String regolamento = controllaELeggi(tree, "regolamento", JsonNode::asString);
+            String scadenzaIscrizioniString = controllaELeggi(tree, "scadenzaIscrizioni", JsonNode::asString);
+            String inizioString = controllaELeggi(tree, "inizio", JsonNode::asString);
+            String fineString = controllaELeggi(tree, "fine", JsonNode::asString);
+            String luogo = controllaELeggi(tree, "luogo", JsonNode::asString);
             double premio = controllaELeggi(tree, "premio", JsonNode::asDouble);
 
-            return new RichiestaCreaHackaton(dimensioneMassimaTeam, regolamento, scadenzaIscrizioni, inizio, fine, luogo, premio);
+            try {
+                LocalDate scadenzaIscrizioni = LocalDate.parse(scadenzaIscrizioniString, DateTimeFormatter.ISO_DATE);
+                LocalDateTime inizio = LocalDateTime.parse(inizioString, DateTimeFormatter.ISO_DATE_TIME);
+                LocalDateTime fine = LocalDateTime.parse(fineString, DateTimeFormatter.ISO_DATE_TIME);
+                return new RichiestaCreaHackaton(dimensioneMassimaTeam, regolamento, scadenzaIscrizioni, inizio, fine, luogo, premio);
+            } catch (DateTimeParseException exception) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Formato data errato: " + exception.getMessage());
+            }
         }
 
     }
