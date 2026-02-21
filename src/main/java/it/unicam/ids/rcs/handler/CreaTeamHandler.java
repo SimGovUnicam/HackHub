@@ -20,11 +20,15 @@ package it.unicam.ids.rcs.handler;
 
 import it.unicam.ids.rcs.controller.TeamController;
 import it.unicam.ids.rcs.controller.UtenteController;
+import it.unicam.ids.rcs.model.Team;
 import it.unicam.ids.rcs.model.Utente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
@@ -51,12 +55,12 @@ public class CreaTeamHandler {
      */
     @PostMapping("/team/crea")
     public ResponseEntity<String> creaTeam(@RequestParam(name = "nome") String nome) {
-        if(nome == null || nome.isEmpty())
+        if (nome == null || nome.isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nome del team non valido");
 
         Utente utenteInSessione = UtenteController.getUtenteInSessione();
         if (utenteInSessione.getTeam() != null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utente già associato ad un team");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utente giÃ  associato ad un team");
         }
         this.teamController.creaTeam(nome);
         return new ResponseEntity<>("Creazione team avviata con successo", HttpStatus.OK);
@@ -66,11 +70,12 @@ public class CreaTeamHandler {
      * Questo metodo conferma la creazione del team. Il sistema registra il nuovo team.
      */
     @GetMapping("/team/confermaCreazione")
-    public ResponseEntity<String> confermaCreazione() {
+    public ResponseEntity<Team> confermaCreazione() {
         Utente utenteInSessione = UtenteController.getUtenteInSessione();
         this.teamController.registraTeam(utenteInSessione);
-        utenteInSessione.setTeam(this.teamController.getTeam());
+        Team team = this.teamController.getTeam();
+        utenteInSessione.setTeam(team);
         this.utenteController.aggiornaUtente(utenteInSessione);
-        return new ResponseEntity<>("Team creato con successo", HttpStatus.OK);
+        return new ResponseEntity<>(team, HttpStatus.CREATED);
     }
 }

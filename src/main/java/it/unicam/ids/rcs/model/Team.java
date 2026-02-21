@@ -97,18 +97,15 @@ public class Team {
         return Objects.hash(id, nome);
     }
 
-    public static class Serializer extends ValueSerializer<Team> {
-
-        @Override
-        public void serialize(Team team, JsonGenerator gen, SerializationContext ctxt) throws JacksonException {
-            gen.writeStartObject();
-            gen.writeStringProperty("nome", team.getNome());
-            gen.writeStartArray("membri");
-            for (Utente utente : team.getMembri()) {
-                gen.writeObjectRef(utente);
-            }
-            gen.writeEndArray();
-            gen.writeEndObject();
+    public void serialize(Team team, JsonGenerator gen, SerializationContext context) throws JacksonException {
+        Utente.Serializer utenteSerializer = new Utente.Serializer();
+        gen.writeStartObject();
+        gen.writeStringProperty("nome", team.getNome());
+        gen.writeArrayPropertyStart("membri");
+        for (Utente utente : team.getMembri()) {
+            utenteSerializer.serialize(utente, gen, context);
         }
+        gen.writeEndArray();
+        gen.writeEndObject();
     }
 }
