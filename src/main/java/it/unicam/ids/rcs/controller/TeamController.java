@@ -52,7 +52,6 @@ public class TeamController {
      * @return <code>True</code> se il nuovo team viene creato con successo, <code>False</code> altrimenti.
      */
     public boolean creaTeam(String nome) {
-        System.out.println("QUI");
         Team team = this.teamRepository.cercaPerNome(nome);
         if (team != null){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Team già esistente con quel nome");
